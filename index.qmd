@@ -1,0 +1,46 @@
+---
+title: "Power, Politics, and Data"
+subtitle: "A Hands-On Introduction to Political Science Data Analysis with R."
+details: |
+  {{< var course.semester >}}<br>{{< var school.name >}}<br>{{< var university.name >}}
+sidebar: false
+toc: false
+page-layout: full
+format: 
+  html:
+    template-partials: 
+      - html/home/title-block.html
+course-logo: /files/img/hex-testudo.png
+---
+
+::: home
+::: {.grid .course-details}
+::: {.g-col-12 .g-col-sm-6 .g-col-md-4}
+### Lecturer
+
+-   {{< fa user >}}   [{{< var instructor.name >}}]({{< var instructor.url >}})
+-   {{< fa university >}}   {{< var instructor.office >}}
+-   {{< fa envelope >}}   `{{< var instructor.email >}}`{=html}
+-   {{< fa brands github >}}   [{{< var instructor.github >}}](https://github.com/hgoers)
+:::
+
+::: {.g-col-12 .g-col-sm-6 .g-col-md-4}
+### Course details
+
+-   {{< fa calendar-alt >}}   {{< var course.dates >}}
+-   {{< fa clock >}}   {{< var course.time >}}
+-   {{< fa location-dot >}}   {{< var course.location >}}
+
+### Office hours
+
+-   {{< fa clock >}}   {{< var office.time >}}
+-   {{< fa location-dot >}}   [{{< var office.location >}}](https://umd.zoom.us/j/94914196966)
+:::
+
+::: {.g-col-12 .g-col-md-4 .contact-policy}
+### Contacting me
+
+{{< var instructor.contact_policy >}}
+:::
+:::
+:::

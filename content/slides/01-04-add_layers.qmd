@@ -1,0 +1,67 @@
+---
+title: "Adding More Layers"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center"
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Data visualisation
+
+We will use data visualization to answer the following question:
+
+> Do cars with big engines use more fuel than cars with small engines?
+
+## Let's look at groups in the data
+
+-   Can look at more than two interesting elements of our data.
+
+-   You can use visual elements or aesthetics (`aes`) to communicate many dimensions in your data.
+
+-   Let's look at a categorical variable: the class of car (SUV, 2 seater, pick up truck, etc.).
+
+-   *Look for meaningfully defined groups.*
+
+## Let's look at groups in the data
+
+```{r}
+#| code-line-numbers: "1"
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, colour = class)) + 
+  geom_point()
+```
+
+## Add more information
+
+```{r}
+#| code-line-numbers: "3"
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, colour = class)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  scale_color_colorblind()
+```
+
+## Look at the relationship across all cars
+
+```{r}
+#| code-line-numbers: "2"
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  scale_color_colorblind()
+```

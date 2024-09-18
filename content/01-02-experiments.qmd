@@ -1,0 +1,23 @@
+---
+title: "Causal Effects and Experiments"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+bibliography: references.bib
+---
+
+Often political science researchers want to better understand what factors lead to (or cause) certain outcomes of interest. More specifically, they want to know whether changes to some factor cause changes in their outcome of interest. This session introduces you to these concepts and explains how we might go about identifying these causal effects. 
+
+<iframe class="slide-deck" src="../content/slides/01-07-experiments.html" width = "100%" height = 600px></iframe>
+
+## OPTIONAL: Using randomization to get (nearly) identical groups
+
+<iframe class="slide-deck" src="../content/slides/01-08-randomization.html" width = "100%" height = 600px></iframe>
+
+

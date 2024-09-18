@@ -1,0 +1,107 @@
+---
+title: "Plotting Your Data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center"
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Data visualisation
+
+We will use data visualization to answer the following question:
+
+> Do cars with big engines use more fuel than cars with small engines?
+
+## Set up your plot
+
+*An empty canvas!*
+
+```{r}
+ggplot(data = mpg)
+```
+
+## Map your aesthetics
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+## Add in your cars
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point()
+```
+
+## EXERCISE {background-color="#B56576"}
+
+1.  Make a scatter plot of `hwy` vs `cyl`.
+
+<br>
+
+2.  What happens if you make a scatter plot of `class` vs `drv`? Why is the plot not useful?
+
+<br>
+
+3.  Why does the following give an error and how would you fix it?
+
+```{r}
+#| eval: false
+
+ggplot(data = mpg) + 
+  geom_point()
+```
+
+## ANSWERS {background-color="#B56576"}
+
+1.  Make a scatter plot of `hwy` vs `cyl`.
+
+```{r}
+ggplot(mpg, mapping = aes(x = hwy, y = cyl)) + 
+  geom_point()
+```
+
+## ANSWERS {background-color="#B56576"}
+
+2.  What happens if you make a scatter plot of `class` vs `drv`? Why is the plot not useful?
+
+```{r}
+ggplot(mpg, mapping = aes(x = class, y = drv)) + 
+  geom_point()
+```
+
+## ANSWERS {background-color="#B56576"}
+
+3.  Why does the following give an error and how would you fix it?
+
+```{r}
+#| eval: false
+
+ggplot(data = mpg) + 
+  geom_point()
+```
+
+![](img/error.png){fig-align="center"}
+
+## ANSWERS {background-color="#B56576"}
+
+3.  Why does the following give an error and how would you fix it?
+
+```{r}
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point()
+```

@@ -1,0 +1,103 @@
+---
+title: "Loading and Exploring Your Data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center"
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Data visualisation
+
+We will use data visualization to answer the following question: 
+
+> Do cars with big engines use more fuel than cars with small engines?
+
+## Load relevant packages 
+
+```{r}
+#| eval: false
+
+# Installing new packages
+install.packages("ggthemes")
+
+# Load the relevant packages
+library(tidyverse)
+library(ggthemes)
+```
+
+## Loading in relevant data
+
+```{r}
+#| eval: false
+
+# Load the data
+mpg
+```
+
+```{r}
+#| echo: false
+
+mpg |> 
+  head() |> 
+  select(1:5) |> 
+  knitr::kable()
+```
+
+## EXERCISE {background-color="#B56576"}
+
+<br>
+
+Learn more about this data set by typing `?mpg` into your console.
+
+::: aside
+To get help on any function or data set use: `?function`
+:::
+
+## The `mpg` data set
+
+```{r}
+glimpse(mpg)
+```
+
+## The `mpg` data set
+
+A couple of useful variables:
+
+-   `displ`: engine displacement, in litres
+
+-   `hwy`: highway miles per gallon
+
+## EXERCISE {background-color="#B56576"}
+
+1.  How many rows are in `mpg`? How many columns?
+
+```{r}
+#| eval: false
+
+nrow(mpg)
+ncol(mpg)
+```
+
+<br>
+
+2.  What does the `drv` variable describe?
+
+```{r}
+#| eval: false
+
+?mpg
+```
+

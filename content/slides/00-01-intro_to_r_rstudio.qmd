@@ -1,0 +1,191 @@
+---
+title: "Introduction to R and RStudio"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center" 
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Learning objectives for today
+
+1.  Introduction to R
+
+2.  Introduction to RStudio
+
+## Why R?
+
+-   A versatile programming language
+
+    -   All materials used in this course were produced using R, including the website and fancy slides
+
+-   Free and accessible!
+
+## R and RStudio
+
+::: columns
+::: {.column width="50%"}
+### R
+
+R is a free and open-source programming language and software environment for statistical computing and graphics.
+:::
+
+::: {.column width="50%"}
+### RStudio
+
+RStudio is an integrated development environment (IDE) for the R programming language.
+:::
+:::
+
+::: aside
+Instructions on how to download R and RStudio are provided in the [*Install or upgrade R and RStudio chapter*](https://happygitwithr.com/install-r-rstudio.html) in Jennifer Bryan's **Happy Git and GitHub for the useR**.
+:::
+
+## A Tour of RStudio
+
+![Source: [R4DS](https://r4ds.had.co.nz/workflow-scripts.html#workflow-scripts)](img/rstudio-console.png){fig-align="center"}
+
+## R basics
+
+R code:
+
+```{r}
+1 + 2
+```
+
+Functions:
+
+```{r}
+sum(1, 2)
+```
+
+## EXERCISE {background-color="#B56576"}
+
+1.  Open up RStudio.
+2.  Using the console, find the summation of `45`, `978`, and `121`.
+3.  What is `67` divided by `6`?
+4.  What is the square root of `894`? HINT: use the `sqrt()` function.
+
+## CHECK YOUR ANSWERS {background-color="#B56576"}
+
+Using the consol, find the summation of `45`, `978`, and `121`.
+
+```{r}
+sum(45, 978, 121)
+```
+
+*Or:*
+
+```{r}
+45 + 978 + 121
+```
+
+What is `67` divided by `6`?
+
+```{r}
+67 / 6
+```
+
+What is the square root of `894`?
+
+```{r}
+sqrt(894)
+```
+
+## Functions
+
+![](img/machine.png){fig-align="center"}
+
+## R packages
+
+Packages are collections of R functions and data.
+
+```{r}
+#| eval: false
+
+# Install the relevant package(s)
+install.packages("tidyverse")
+
+# Load the packages in current session
+library(tidyverse)
+```
+
+::: aside
+`tidyverse` is a collection of many different packages The individual packages are listed when you load the `tidyverse` package.
+:::
+
+## EXERCISE {background-color="#B56576"}
+
+1.  Open up RStudio.
+2.  Using the console, install the `tidyverse` packages.
+
+```{r}
+#| eval: false
+
+install.packages("tidyverse")
+```
+
+3.  Load these packages in your current session
+
+```{r}
+
+library(tidyverse)
+```
+
+## RStudio Projects
+
+*For your sanity's sake, for your co-author's sanity's sake*
+
+Keeps everything:
+
+-   Organised
+
+-   Reproducible
+
+-   Sustainable
+
+::: aside
+For later reference, head to Hadley Wickham's [*Workflow: projects* chapter](https://r4ds.had.co.nz/workflow-projects.html#workflow-projects) in R4DS.
+:::
+
+## EXERCISE {background-color="#B56576"}
+
+1.  In the RStudio console, type in `getwd()` to see where you are on your computer.
+
+## EXERCISE {background-color="#B56576"}
+
+2.  Create a new RStudio project for this course:
+
+![Source: [R4DS](https://r4ds.had.co.nz/workflow-projects.html#rstudio-projects)](img/rstudio-project-1.png){alt="Source: R4DS" fig-align="center"}
+
+## EXERCISE {background-color="#B56576"}
+
+2.  Create a new RStudio project for this course:
+
+![Source: [R4DS](https://r4ds.had.co.nz/workflow-projects.html#rstudio-projects)](img/rstudio-project-2.png){alt="Source: R4DS" fig-align="center"}
+
+## EXERCISE {background-color="#B56576"}
+
+2.  Create a new RStudio project for this course:
+
+![Source: [R4DS](https://r4ds.had.co.nz/workflow-projects.html#rstudio-projects)](img/rstudio-project-3.png){alt="Source: R4DS" fig-align="center"}
+
+## Summary
+
+This session you:
+
+1.  Learnt about new data science tools to help you conduct replicable and reproducible political science research
+
+2.  Set up your data science tools

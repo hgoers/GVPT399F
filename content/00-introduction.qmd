@@ -1,0 +1,47 @@
+---
+title: "Introduction"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true
+  fig-width: 10
+---
+
+Welcome to GVPT399F: Power, Politics, and Data! This course will introduce you to the skills you need to explore relationships within data and uncover answers to pressing political questions. 
+
+## What this course covers
+
+## Course structure
+
+The course comprises seven sessions (including this introductory session). You should complete these in order, from session zero to six. Each builds on the previous sessions.  
+
+Each session includes some written content, a series of short recorded lectures, and optional practice questions. Each ends with a mandatory multiple-choice quiz. You will be introduced to new R code and statistical concepts in each session. 
+
+You will complete an exam at the end of session three and the final, sixth session. 
+
+## Course resources
+
+Each session includes several resources written just for you. These can all be accessed from this website. They include: 
+
+-   a series of videos
+-   corresponding slides with embedded code.
+
+You will need to head back over to ELMs to access the quizzes and exams.
+
+## Additional required resources
+
+To complete this course, you need access to a personal computer that is connected to the internet. You need to have R and RStudio downloaded on to that computer. Here are detailed instructions on how to download these two free resources:
+
+{{< fa book >}} [Instructions on downloading R](https://r4ds.hadley.nz/intro#r)
+
+{{< fa book >}} [Instructions on downloading RStudio](https://r4ds.hadley.nz/intro#rstudio)
+
+There are no additional required readings for this course. Along the way, I may suggest other resources - specific book chapters, blog posts, videos, etc. - that you might find helpful. Sometimes it helps to hear some of these concepts explained in a couple of different ways. 
+
+## Introduction to R and RStudio
+
+<iframe class="slide-deck" src="../content/slides/00-01-intro_to_r_rstudio.html" width = "100%" height = 600px></iframe>

@@ -1,0 +1,56 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "GVPT399F"
+  google-analytics: ""
+  repo-url: https://github.com/hgoers/GVPT339F
+  repo-actions: [issue]
+
+  favicon: "/files/img/hex-testudo.png"
+
+  navbar:
+    pinned: true
+    background: "#C31832"
+    right:
+      - href: index.qmd
+        text: Home
+      - href: content/00-introduction.qmd
+        text: Content
+
+  sidebar:
+    - title: "Content"
+      style: "docked"
+      contents:
+        - section: "Session 0"
+          contents: 
+            - content/00-introduction.qmd
+        - section: "Session 1"
+          contents:         
+            - content/01-01-visualization.qmd         
+            - content/01-02-experiments.qmd
+        - section: "Additional resources"
+          contents: 
+            - resources/quarto.qmd
+        
+        
+  page-footer:
+    left: |
+      Content {{< fa brands creative-commons >}} {{< var course.copyright_year >}} by [{{< var instructor.name_no_title >}}]({{< var instructor.url >}}) <br>
+      All content licensed under a {{< fa brands creative-commons >}}
+      {{< fa brands creative-commons-by >}} {{< fa brands creative-commons-nc >}}
+      [Creative Commons Attribution-Non Commercial 4.0 International license (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
+    right: |
+      Made with {{< fa brands r-project >}} and [Quarto](https://quarto.org/)<br>
+      [Heavily inspired by course websites built by Dr Andrew Heiss](https://www.andrewheiss.com/teaching/)
+
+format:
+  html:
+    theme: litera
+    css: html/custom.css
+    toc: true
+    highlight-style: monokai
+
+editor: visual
+

@@ -1,0 +1,183 @@
+---
+title: "Using randomization to create (nearly) identical groups"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  warning: false
+  fig-align: "center"
+---
+
+## Our goal
+
+![](img/indiv_exp.png){fig-align="center"}
+
+## Next best thing
+
+Instead, we should try to make two groups that are as similar as possible to each other prior to treatment.
+
+## The magic of randomization
+
+Perfectly random assignment does this very well!
+
+![](img/coin.webp){fig-align="center"}
+
+## Don't take my word for it
+
+Imagine we have a group of 1,000 individuals. We know the following about them:
+
+-   Height
+
+-   Weight
+
+-   Eye colour
+
+## Our group
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+
+tibble(
+  id = 1:1000,
+  height = rnorm(1000, 170, 6),
+  weight = rnorm(1000, 80, 10),
+  eye_colour = sample(c("Blue", "Green", "Brown", "Grey"), 1000, replace = T)
+)
+```
+
+## Random assignment
+
+I'm now going to flip (an imaginary, computer-generated) coin for each of these 1,000 individuals to assigned them to group A or B: 
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+
+rand_group <- tibble(
+  id = 1:1000,
+  height = rnorm(1000, 170, 6),
+  weight = rnorm(1000, 80, 10),
+  eye_colour = sample(c("Blue", "Green", "Brown"), 1000, replace = T)
+) |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+rand_group
+```
+
+## How similar are these groups? 
+
+Let's first check their heights: 
+
+```{r}
+ggplot(rand_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+```
+
+## How similar are these groups? 
+
+And their weights: 
+
+```{r}
+ggplot(rand_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+```
+
+## How similar are these groups? 
+
+And their eye colors: 
+
+```{r}
+rand_group |> 
+  count(group, eye_colour) |> 
+  ggplot(aes(x = n, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Count",
+       y = "Eye color",
+       fill = "Group")
+```
+
+## Making sure this wasn't a fluke
+
+Let's re-run this: 
+
+```{r}
+#| echo: false
+
+rand_group <- tibble(
+  id = 1:1000,
+  height = rnorm(1000, 170, 6),
+  weight = rnorm(1000, 80, 10),
+  eye_colour = sample(c("Blue", "Green", "Brown"), 1000, replace = T)
+) |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+rand_group
+```
+
+## Check how similar they are
+
+```{r}
+library(patchwork)
+
+p1 <- ggplot(rand_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+
+p2 <- ggplot(rand_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+
+p3 <- rand_group |> 
+  count(group, eye_colour) |> 
+  ggplot(aes(x = n, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Count",
+       y = "Eye color",
+       fill = "Group")
+
+p1 | p2 | p3
+```
+
+## Increasingly similar
+
+In fact, if we did this many, many, many times, these groups would be, on average, increasingly identical!
+
+Why? 
+
+-   Central limit theorem
+
+-   Law of large numbers
+
+::: {.aside}
+We will talk more about those concepts later in the course.
+:::

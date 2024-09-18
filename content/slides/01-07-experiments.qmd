@@ -1,0 +1,264 @@
+---
+title: "Causal Effects and Experiments"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  warning: false
+  fig-align: "center"
+bibliography: references.bib
+---
+
+```{r}
+#| echo: false 
+
+library(tidyverse)
+```
+
+## Causes and effects
+
+Our goal is to better understand what factors lead to certain outcomes of interest.
+
+-   Does increasing the number of voting booths close to a potential voter make that person more likely to vote?
+
+-   Do peace treaties signed with factionalized rebel groups more often lead to a return to conflict than those signed with a single, cohesive group?
+
+-   Does trade between two countries make war between them less likely?
+
+## Causes and effects
+
+These are causal statements:
+
+-   More local voting booths $\rightarrow$ More likely to vote
+
+-   More factionalization $\rightarrow$ More likely to restart conflict
+
+-   Trade $\rightarrow$ Less likely to go to war
+
+## How to identify causes and their effects
+
+Proving that changes to one factor *cause* changes to another is very tricky!
+
+-   Need to account for all the other factors
+
+## The efficacy of international election monitors
+
+Do international monitors cause less election-day fraud in democratic elections?
+
+-   Number of elections monitored by international observers increased throughout the 2000s
+
+-   But do monitors increase the chances the election will be free and fair?
+
+-   In other words, are they effective?
+
+::: aside
+Hyde, Susan D. 2007. “The Observer Effect in International Politics: Evidence from a Natural Experiment.” World Politics 60 (1): 37–63. http://www.jstor.org/stable/40060180.
+:::
+
+## The efficacy of international election monitors
+
+Dr Susan Hyde set out to answer this very question. From her article (page 39):
+
+> If the presence of international observers causes a reduction in election-day fraud, the effect of observers should be visible at the subnational level by comparing polling stations that were visited by observers with those that were not visited. More specifically, if international monitoring reduces electionday fraud directly, all else held equal, the cheating parties should gain less of their ill-gotten vote share in polling stations that were visited by international monitors.
+
+## Causal relationships
+
+Refers to the directional connection between a change in one variable and a corresponding change in another.
+
+-   The direction matters!
+
+-   **Treatment variable:** the variable causing changes to another variable.
+
+-   **Outcome variable:** the variable changing as a result of changes to another variable (the treatment).
+
+## Treatment and outcome variables
+
+We want to test whether the presence of international monitors (treatment) leads to less election day fraud (outcome).
+
+*International election monitors present at polling stations* $\rightarrow$ *Less election-day fraud at that station*
+
+## Treatment variable
+
+At any given polling station in any given election, monitors may be: 1) present, or 2) not present.
+
+Two different conditions:
+
+-   **Treatment:** condition with treatment (monitors are present)
+
+-   **Control:** condition without treatment (monitors are not present)
+
+::: aside
+Treatment variables do not need to be binary.
+:::
+
+## Outcome variable
+
+At any given polling station in any given election, fraud may: 1) occur, or 2) not occur.
+
+::: aside
+Outcome variables also do not need to binary.
+:::
+
+## Observing our outcome
+
+Sometimes it can be hard to observe our outcome of interest. 
+
+-   How might we see all election-day fraud? 
+
+-   How might we measure it?
+
+## Observing our outcome
+
+Hyde's answer: vote-share! 
+
+*International election monitors present at polling stations* $\rightarrow$ *Less election-day fraud at that station* $\rightarrow$ *Lower vote-share for the cheating party*
+
+## Individual causal effects
+
+We want to know whether the treatment *causes* a change in our outcome of interest.
+
+![](img/indiv_exp.png){fig-align="center"}
+
+## Individual causal effects
+
+What might this look like in the real world? 
+
+-   Imagine we are looking at a specific election 
+
+-   100 polling stations
+
+-   Measure the vote share received by the cheating party
+
+## Hypothetical election
+
+```{r}
+#| echo: false
+
+indiv_effect_df <- tibble(
+  polling_station_id = 1:100,
+  vote_share_monitored = round(rbeta(100, 4, 6) * 100, 2),
+  vote_share_not_monitored = round(rbeta(100, 11, 2) * 100, 2)
+)
+
+indiv_effect_df
+```
+
+## Individual effects
+
+The *only* difference between these two conditions is the presence of international monitors!
+
+-   The difference between vote shares under these conditions is *caused by the monitors*.
+
+## Individual effects
+
+```{r}
+#| echo: false
+
+indiv_effect_df |> 
+  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+```
+
+## No parallel worlds
+
+Sadly for us, we cannot create parallel worlds...
+
+```{r}
+#| echo: false
+
+factual_indiv_df <- indiv_effect_df |> 
+  mutate(monitored = rbinom(100, 1, 0.5),
+         vote_share_monitored = if_else(monitored == 1, vote_share_monitored, NA_real_),
+         vote_share_not_monitored = if_else(monitored == 0, vote_share_not_monitored, NA_real_)) |> 
+  relocate(monitored, .after = polling_station_id)
+
+factual_indiv_df
+```
+
+## What now? 
+
+```{r}
+#| echo: false
+
+factual_indiv_df |> 
+  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+```
+
+## Average causal effects
+
+We need to move away from looking at individuals and start to look for patterns in our group.
+
+## Back to our parallel worlds
+
+```{r}
+#| echo: false
+
+indiv_effect_df |> 
+  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+```
+
+## Difference of averages across all individuals 
+
+What was the average vote share received in each world? 
+
+```{r}
+#| echo: false
+
+indiv_effect_df |> 
+  mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
+  summarise(vote_share_monitored = mean(vote_share_monitored),
+            vote_share_not_monitored = mean(vote_share_not_monitored),
+            difference = vote_share_monitored - vote_share_not_monitored)
+```
+
+## Back to reality
+
+```{r}
+#| echo: false
+
+factual_indiv_df |> 
+  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+```
+
+## Difference-of-means
+
+What was the average vote share received in each group? 
+
+```{r}
+#| echo: false
+
+factual_indiv_df |> 
+  mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
+  summarise(vote_share_monitored = mean(vote_share_monitored, na.rm = T),
+            vote_share_not_monitored = mean(vote_share_not_monitored, na.rm = T),
+            difference = vote_share_monitored - vote_share_not_monitored)
+```
+
+## How on Earth does this work so well? 
+
+Randomization!
+
+-   Monitors were assigned to polling stations randomly (for example, with the flip of a coin)
+
+-   This created two groups of stations that were roughly identical **on average** to one another prior to treatment
+
+-   This mimics what happens when we split our world into two (creating two literally identical groups)
+
+::: {.aside}
+I will demonstrate how this works in a short, optional video below.  
+:::
+
+## Do international monitors deter election-day fraud? 
+
+Yes! 
+
+-   The international community monitored the 2003 Armenian Presidential elections
+-   Monitors were assigned randomly to the polling stations
+-   Hyde found a big average difference between the vote share received by the cheating party at monitored stations compared to non-monitored stations.  
+
+
+

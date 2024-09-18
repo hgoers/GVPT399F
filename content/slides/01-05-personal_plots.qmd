@@ -1,0 +1,339 @@
+---
+title: "Styling Your Plots"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center"
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Data visualisation
+
+We will use data visualization to answer the following question:
+
+> Do cars with big engines use more fuel than cars with small engines?
+
+## Add useful titles and labels
+
+```{r}
+#| eval: false
+#| code-line-numbers: "4,5,6,7,8"
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+## Add useful titles and labels
+
+```{r}
+#| echo: false
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+## Flexible visualization
+
+You can use visual elements to communicate your findings in engaging ways.
+
+```{r}
+#| code-line-numbers: "2"
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class == "2seater"))
+```
+
+## Changing the look of your plots
+
+```{r}
+#| code-line-numbers: "2"
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), colour = "red")
+```
+
+## EXERCISE {background-color="#B56576"}
+
+What's gone wrong with this code? Why are the points not blue?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+
+## ANSWER {background-color="#B56576"}
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy),
+             color = "blue")
+```
+
+## EXERCISE {background-color="#B56576"}
+
+1.  Name a categorical variable in `mpg`. Name a continuous one.
+
+<br>
+
+2.  Map a continuous variable to `color`. How does this aesthetics behave differently for categorical vs. continuous variables?
+
+<br>
+
+3.  Map `class` to the `shape` aesthetic. What does the warning tell you?
+
+## ANSWERS {background-color="#B56576"}
+
+::: columns
+::: {.column width="50%"}
+### Categorical
+
+-   `manufacturer`
+-   `model`
+-   `trans`
+-   `drv`
+-   `fl`
+-   `class`
+:::
+
+::: {.column width="50%"}
+### Continuous
+
+-   `displ`
+-   `year`
+-   `cyl`
+-   `cty`
+-   `hwy`
+:::
+:::
+
+## ANSWERS {background-color="#B56576"}
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, colour = cyl)) + 
+  geom_point()
+```
+
+## ANSWERS {background-color="#B56576"}
+
+![](img/warning.png){fig-align="center"}
+
+## Let's clean our graph up
+
+Less is more when it comes to data visualization.
+
+```{r}
+#| eval: false
+#| code-line-numbers: "4"
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  theme_minimal() + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+::: aside
+All pre-set `ggplot` themes can be found in the [`ggplot` documentation](https://ggplot2.tidyverse.org/reference/ggtheme.html).
+:::
+
+## Let's clean this up
+
+```{r}
+#| echo: false
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  theme_minimal() + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+## EXERCISE {background-color="#B56576"}
+
+Head over to the [`ggplot` documentation](https://ggplot2.tidyverse.org/reference/ggtheme.html) and find your favorite preset theme:
+
+<br>
+
+https://ggplot2.tidyverse.org/reference/ggtheme.html
+
+## Creating your own theme
+
+```{r}
+#| eval: false
+#| code-line-numbers: "4-10"
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  theme(
+    legend.position = "bottom",
+    panel.grid = element_blank(),
+    panel.background = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold")
+  ) + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+::: aside
+All theme elements that you can control can be found in the [`ggplot` documentation](https://ggplot2.tidyverse.org/reference/theme.html#arguments). There are a lot!
+:::
+
+## Creating your own theme
+
+```{r}
+#| echo: false
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  theme(
+    legend.position = "bottom",
+    panel.grid = element_blank(),
+    panel.background = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold")
+  ) + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+## The before shot
+
+```{r}
+#| echo: false
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+## EXERCISE {background-color="#B56576"}
+
+Customize the last plot you made using the `theme()` argument.
+
+## Working with categorical data
+
+We often want to explore patterns in categorical (or discrete) data. We need new tools to do this.
+
+<br>
+
+```{r}
+select(mpg, manufacturer, model, drv)
+```
+
+## Visualizing distributions
+
+```{r}
+ggplot(mpg, aes(x = drv)) + 
+  geom_bar()
+```
+
+## Visualizing distributions
+
+*Reorder in relation to frequency*
+
+```{r}
+ggplot(mpg, aes(x = fct_infreq(drv))) +
+  geom_bar()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy)) +
+  geom_density()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy, colour = drv)) +
+  geom_density()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy, colour = drv, fill = drv)) +
+  geom_density(alpha = 0.5)
+```
+
+## Summary
+
+This session you:
+
+1.  Set up your data science tools
+
+2.  Plotted complex data in an engaging way
+
+3.  Discovered interesting relationships in the data
+
+4.  Connected these relationships or trends to your expectations (or hypotheses about the data)
+
+##  {background-color="#B56576"}

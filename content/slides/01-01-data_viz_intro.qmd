@@ -1,0 +1,92 @@
+---
+title: "Data Visualization"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center"
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Data visualisation
+
+We will use data visualization to answer the following question: 
+
+> Do cars with big engines use more fuel than cars with small engines?
+
+## EXERCISE {background-color="#B56576"}
+
+1. What do you think is the answer to this question? 
+
+<br>
+
+2. How would you prove your answer? What information about cars would you need? 
+
+## R4DS
+
+This session will borrow (read: *steal*) heavily from Hadley Wickham's *R for Data Science* book.
+
+![Source: [R4DS](https://r4ds.had.co.nz/index.html)](img/cover.png){alt="Source: R4DS" fig-align="center"}
+
+## Skipping to the end
+
+```{r}
+#| echo: false
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  theme(
+    legend.position = "bottom",
+    panel.grid = element_blank(),
+    panel.background = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold")
+  ) + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+## How did we do this?
+
+```{r}
+#| eval: false
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(colour = class)) + 
+  geom_smooth(method = "lm") + 
+  theme(
+    legend.position = "bottom",
+    panel.grid = element_blank(),
+    panel.background = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(face = "bold")
+  ) + 
+  labs(
+    title = "Engine displacement and highway miles per gallon",
+    subtitle = "Values for seven different classes of cars",
+    x = "Engine displacement (L)",
+    y = "Highway miles per gallon"
+  ) + 
+  scale_color_colorblind()
+```
+
+::: aside
+We will step through this now. By the end of this session, you will be able to make your own colourful data visualisations using R.
+:::

@@ -1,0 +1,36 @@
+---
+title: "Introducing R Through Data Visualization"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+---
+
+This section focuses on introducing you to some very exciting new R skills. You will learn how to create your own customized data visualizations. You will play around with real-world data. 
+
+<iframe class="slide-deck" src="../content/slides/01-01-data_viz_intro.html" width = "100%" height = 600px></iframe>
+
+## Loading in and exploring your data
+
+<iframe class="slide-deck" src="../content/slides/01-02-load_data.html" width = "100%" height = 600px></iframe>
+
+## Plotting your data
+
+<iframe class="slide-deck" src="../content/slides/01-03-plot.html" width = "100%" height = 600px></iframe>
+
+## Adding additional layers to your plot
+
+<iframe class="slide-deck" src="../content/slides/01-04-add_layers.html" width = "100%" height = 600px></iframe>
+
+## Styling your plot
+
+<iframe class="slide-deck" src="../content/slides/01-05-personal_plots.html" width = "100%" height = 600px></iframe>
+
+## Working with categorical data
+
+<iframe class="slide-deck" src="../content/slides/01-06-categorical.html" width = "100%" height = 600px></iframe>

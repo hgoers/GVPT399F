@@ -1,0 +1,74 @@
+---
+title: "Working with Categorical Data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center"
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(ggthemes)
+```
+
+## Working with categorical data
+
+We often want to explore patterns in categorical (or discrete) data. We need new tools to do this.
+
+## Working with categorical data
+
+```{r}
+select(mpg, manufacturer, model, drv)
+```
+
+## Visualizing distributions
+
+```{r}
+ggplot(mpg, aes(x = drv)) + 
+  geom_bar()
+```
+
+## Visualizing distributions
+
+*Reorder in relation to frequency*
+
+```{r}
+ggplot(mpg, aes(x = fct_infreq(drv))) +
+  geom_bar()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy)) +
+  geom_density()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy, colour = drv)) +
+  geom_density()
+```
+
+## Visualizing numeric variables
+
+```{r}
+ggplot(mpg, aes(x = hwy, colour = drv, fill = drv)) +
+  geom_density(alpha = 0.5)
+```

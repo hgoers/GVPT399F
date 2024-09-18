@@ -1,0 +1,32 @@
+author: Harriet Goers
+
+instructor:
+  name: Harriet Goers
+  name_no_title: Harriet Goers
+  email: hgoers@umd.edu
+  url: "https://www.harrietgoers.com"
+  github: hgoers
+  office: "Chincoteague Building"
+  contact_policy: >-
+    E-mail is the best ways to get in contact with me. I will try to respond to all course-related e-mails within 24 hours.
+
+course:
+  number: "GVPT399F"
+  semester: "Winter 2025"
+  time: "Asynchronous"
+  location: "Online"
+  dates: "January 2 - 22"
+  github: "https://github.com/hgoers/GVPT339F"
+  copyright_year: "2025"
+  
+office:
+  time: "By appointment"
+  location: "Zoom"
+
+university:
+  name: University of Maryland, College Park
+  url: "https://www.umd.edu/"
+
+school:
+  name: Department of Government and Politics
+  url: "https://gvpt.umd.edu/"
