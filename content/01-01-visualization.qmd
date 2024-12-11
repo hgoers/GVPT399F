@@ -100,7 +100,7 @@ Returning to our question, *do cars with big engines use more fuel than cars wit
 ::: {.callout-note collapse="true"}
 ## Here's mine:
 
-Cars with larger engines will travel fewer miles on the highway for each gallon of fuel than cars with smaller engines.
+Cars with larger engines will travel fewer miles on the highway for each gallon of fuel used than cars with smaller engines.
 :::
 
 ### Exercise

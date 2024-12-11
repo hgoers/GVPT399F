@@ -44,17 +44,17 @@ You will also complete a final exam at the end of the course. All material cover
 +==============+======================+=================+==========================+
 | 1            | 0: Introduction quiz | 2 January 2025  | 3 January 2025, 11:59PM  |
 +--------------+----------------------+-----------------+--------------------------+
-| 2            | 1: X quiz            | 6 January 2025  | 10 January 2025, 11:59PM |
+| 2            | 1: Session 1 quiz    | 6 January 2025  | 10 January 2025, 11:59PM |
 |              |                      |                 |                          |
-|              | 2: X quiz            |                 |                          |
+|              | 2: Session 2 quiz    |                 |                          |
 |              |                      |                 |                          |
-|              | 3: X quiz            |                 |                          |
+|              | 3: Session 3 quiz    |                 |                          |
 +--------------+----------------------+-----------------+--------------------------+
-| 3            | 4: X quiz            | 13 January 2025 | 17 January 2025, 11:59PM |
+| 3            | 4: Session 4 quiz    | 13 January 2025 | 17 January 2025, 11:59PM |
 |              |                      |                 |                          |
-|              | 5: X quiz            |                 |                          |
+|              | 5: Session 5 quiz    |                 |                          |
 |              |                      |                 |                          |
-|              | 6: X quiz            |                 |                          |
+|              | 6: Session 6 quiz    |                 |                          |
 +--------------+----------------------+-----------------+--------------------------+
 | 4            | 7: Final exam        | 18 January 2025 | 22 January 2025, 11:59PM |
 +--------------+----------------------+-----------------+--------------------------+
@@ -83,18 +83,18 @@ Everything you need to successfully complete this course is available for free.
 
 ## Introduction to R and RStudio
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Video
 
-<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=86d7d676-961d-4379-be9c-b24300bb7137&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&start=0&interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Introduction to R and RStudio" ></iframe>
+<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=86d7d676-961d-4379-be9c-b24300bb7137&amp;autoplay=false&amp;offerviewer=true&amp;showtitle=true&amp;showbrand=true&amp;captions=false&amp;start=0&amp;interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Introduction to R and RStudio">
+
+</iframe>
 
 ## Slides
 
 <iframe class="slide-deck" src="../content/slides/00-01-intro_to_r_rstudio.html" width="100%" height="600px">
 
 </iframe>
-
 :::
 
 I will now introduce you to two tools you will use to successfully complete this course: R and RStudio.
@@ -127,7 +127,9 @@ Finally, I will also introduce you to tools for communicating your findings in a
 
 ## A tour of RStudio
 
-<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=16ee65c7-1484-4bee-9a75-b24300c0fc5a&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&start=0&interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Tour of RStudio" ></iframe>
+<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=16ee65c7-1484-4bee-9a75-b24300c0fc5a&amp;autoplay=false&amp;offerviewer=true&amp;showtitle=true&amp;showbrand=true&amp;captions=false&amp;start=0&amp;interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Tour of RStudio">
+
+</iframe>
 
 ### Exercises
 

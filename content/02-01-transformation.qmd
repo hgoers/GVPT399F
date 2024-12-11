@@ -28,9 +28,70 @@ Before we get started, check out this video that describes (very enthusiasticall
 
 {{< video https://www.youtube.com/embed/jbkSRLYSojo width="100%" height="600px" >}}
 
+## Introduction
+
 <iframe class="slide-deck" src="../content/slides/02-01-transformation_intro.html" width="100%" height="600px">
 
 </iframe>
+
+Today, I am going to introduce you to some of my most widely used functions in R. The `dplyr` R package, which houses these functions, focuses on providing you with some very helpful tools to tidy your data. This step in the data analysis process is critical, and often one of the most time consuming, so let's get started!
+
+### R objects
+
+As a reminder, objects sit in R's memory. You can see which ones exist in your current session and their values over in the environment tab.
+
+To create a new object, use: `<-`. You can update that object at any time.
+
+::: callout-note
+Some people use `=` instead of `<-`. I strongly recommend against this. It makes your script difficult to read, and it can lead to syntax errors.
+:::
+
+### R functions
+
+Functions are helpful short-hands that perform specific tasks in R. Many of these functions come straight out of the box with R. For example, you can run the following code without loading any packages into your current session:
+
+```{r}
+seq(1, 10)
+```
+
+::: callout-tip
+The `seq()` function takes three main arguments: a start value, end value, and interval value. Above I have asked it to start at `1` and end at `10`. By default, its interval value is `1`. Therefore, its output is every whole number from 1 to 10.
+:::
+
+You can even create objects with R functions:
+
+```{r}
+x <- seq(1, 10)
+
+x
+```
+
+Now, the `x` object is a **vector** of all 10 whole numbers from 1 to 10.
+
+### Data
+
+As mentioned above, we are going to be using the Gapminder project's data on countries' health and wealth to explore data transformation. Happily, there is an R package that provides that data for us. We will now install it:
+
+```{r}
+#| eval: false
+
+install.packages("gapminder")
+```
+
+Next, you want to create a new script for this session. At the top of that script, include the code to load in the packages we will be using today:
+
+```{r}
+
+library(tidyverse)
+library(gapminder)
+```
+
+You can now access the Gapminder data directly:
+
+```{r}
+
+gapminder
+```
 
 ### Exercises
 
