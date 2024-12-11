@@ -93,6 +93,54 @@ You can now access the Gapminder data directly:
 gapminder
 ```
 
+Above, R prints out some useful information about our data. First, we learn that it is a tibble. This is the `tidyverse` version of a data frame.
+
+Second, we learn how many rows and columns are included in our data set. We have `r nrow(gapminder) |> scales::comma()` rows and `r ncol(gapminder)` columns.
+
+Next, we learn the column (or variable) titles:
+
+```{r}
+colnames(gapminder)
+```
+
+Next, we see some funny looking three letter words under each column name. These refer to the column's data type. We will discuss these below.
+
+Finally, we see the first few rows of our data set. We can see that each row provides a country's information in a single year.
+
+### Data types
+
+Those funny three-letter words refer to the column's data type. In this data set, we have three different types:
+
+-   \<fct\>, which stands for factor (R's word for categorical variable)
+
+-   \<int\>, which stands for integer
+
+-   \<dbl\>, which stands for double (or real number)
+
+Some other common data types include:
+
+-   \<chr\>, which stands for character (or string)
+
+-   \<dttm\>, which stands for date-time
+
+-   \<lgl\>, which stands for local (which can only be TRUE or FALSE)
+
+Data types are important because each column can only contain one data type. You cannot, for example, include a character in an integer column (imagine trying to run some calculation on that column: how would R treat the stray character value?).
+
+### `dplyr` basics
+
+Now we know a little bit more about our data set, we are going to use it to explore five of the most commonly used functions in R:
+
+-   `filter()`
+
+-   `arrange()`
+
+-   `select()`
+
+-   `mutate()`
+
+-   `summarise()`
+
 ### Exercises
 
 What is the unit of observation for the `gapminder` data set?
@@ -126,6 +174,52 @@ Which two variables in the `gapminder` data set are factors?
 <iframe class="slide-deck" src="../content/slides/02-02-filter.html" width="100%" height="600px">
 
 </iframe>
+
+We are going to start by learning how to filter our data to only include those observations we are interested in exploring.
+
+All `dplyr` functions are structured the same way. They take the data object you want to transform as their first argument. You then need to identify the columns within that data object you want to transform and what you want to do with them.
+
+For example, the following code takes our data set, `gapminder`, and tells `filter()` that we want to only include rows in which the `country` column matches "Australia" and the `year` column is greater than 2000:
+
+```{r}
+filter(gapminder, country == "Australia", year > 2000)
+```
+
+We can ask `filter()` to include rows that match multiple values:
+
+```{r}
+filter(gapminder, continent %in% c("Asia", "Oceania"))
+```
+
+Here, I have used the `%in%` value and a vector (which is `c(...)`) of strings to ask filter to include all rows in which the `continent` column matches the values "Asia" and "Oceania".
+
+We can ask `filter()` to include values within a range. The following code asks `filter()` to include all rows in which the `pop` column is greater than 500,000 **and** less than 1,000,000:
+
+```{r}
+filter(gapminder, pop > 500000 & pop < 1000000)
+```
+
+The following code asks `filter()` to include all rows in which the `pop` column is greater than 500,000 **or** less than 1,000,000.
+
+```{r}
+filter(gapminder, pop > 500000 | pop < 1000000)
+```
+
+R includes some handy operators:
+
+-   `==` is *equal to*
+
+-   `!=` is *not equal to*
+
+-   `>=` is *greater than or equal to*
+
+-   `<=` is *less than or equal to*
+
+-   `|` is *OR*
+
+-   `&` is *AND*
+
+-   `%in%` is *in*
 
 ### Exercises
 
@@ -187,6 +281,30 @@ filter(gapminder, lifeExp < 50 | lifeExp > 60)
 
 </iframe>
 
+We can control the order of our data using `arrange()`. The following code sorts our data by country name (alphabetically) and year (in ascending numerical order):
+
+```{r}
+arrange(gapminder, country, year)
+```
+
+To sort in descending order, simply wrap your column name in the `desc()` function:
+
+```{r}
+arrange(gapminder, country, desc(year))
+```
+
+You can combine `arrange()` and `filter()` using the `slice_X()` functions. For example, you can filter for the smallest value in a column using `slice_min()`. The following code filters for the smallest value in the `lifeExp` column:
+
+```{r}
+slice_min(gapminder, lifeExp)
+```
+
+The following code filters for the largest value in this column:
+
+```{r}
+slice_max(gapminder, lifeExp)
+```
+
 ### Exercises
 
 Which country-year has the lowest life expectancy?
@@ -218,6 +336,24 @@ Note: check out `slice_min()` and `slice_max()` for more efficient ways of doing
 <iframe class="slide-deck" src="../content/slides/02-04-select.html" width="100%" height="600px">
 
 </iframe>
+
+You can focus your data set on only those variables you are interested in using `select()`. The following code selects only the `country`, `year`, and `pop` variables from our larger `gapminder` data set:
+
+```{r}
+select(gapminder, country, year, pop)
+```
+
+`dplyr` includes some operators that help keep your code clean when working with a lot of data. For example, you can use a colon (`:`) to select all columns between two columns:
+
+```{r}
+select(gapminder, country:pop)
+```
+
+You can use a negative sign (`-`) to specify which columns you want to exclude:
+
+```{r}
+select(gapminder, -(lifeExp:pop))
+```
 
 ### Exercises
 
@@ -267,6 +403,24 @@ select(gapminder, starts_with("c"))
 
 </iframe>
 
+Oftentimes, we need to create new columns from existing ones or change in a consistent way existing columns of data. You can use `mutate()` to do this. For example, the following code creates a new column, `gdp`, which is the product of `gdpPercap` and `pop`:
+
+```{r}
+mutate(gapminder, gdp = gdpPercap * pop)
+```
+
+The following code transforms the existing column `gdpPercap` to its logged form:
+
+```{r}
+mutate(gapminder, gdpPercap = log(gdpPercap))
+```
+
+You can combine `select()` and `mutate()` using the `transmute()` function:
+
+```{r}
+transmute(gapminder, country, year, gdp = gdpPercap * pop)
+```
+
 ### Exercises
 
 Create a new variable that provides each country-year's GDP (which you can get by multiplying its GDP with its population).
@@ -294,6 +448,40 @@ transmute(gapminder, country, year, gdp = gdpPercap * pop)
 <iframe class="slide-deck" src="../content/slides/02-06-summarise.html" width="100%" height="600px">
 
 </iframe>
+
+Finally, you can summarize (or aggregate) your data. For example, we often want to find the average of our observations. The following code finds the average population and GDP per capita for all country-years in our data set:
+
+```{r}
+summarise(
+  gapminder, avg_pop = mean(pop), avg_gdp_per_cap = mean(gdpPercap)
+)
+```
+
+Note that the output is now one row long.
+
+The following finds both the average and mean of our country-years' populations and GDPs per capita:
+
+```{r}
+summarise(
+  gapminder, 
+  avg_pop = mean(pop), 
+  median_pop = median(pop), 
+  avg_gdp_per_cap = mean(gdpPercap),
+  median_gdp_per_cap = median(gdpPercap)
+)
+```
+
+Sometimes, we want to summarize our data within meaningful groups. For example, we may want to find the average population and GDP per capita for each continent included in our data set. To do this, you need to use the `group_by()` function to group your data. You can then use the `summarise()` function to summarize it within those groups:
+
+```{r}
+gapminder_continent <- group_by(gapminder, continent)
+
+summarise(
+  gapminder_continent, 
+  avg_pop = mean(pop), 
+  avg_gdp_per_cap = mean(gdpPercap)
+)
+```
 
 ### Exercises
 
@@ -349,9 +537,55 @@ arrange(gapminder_country_avg, desc(avg_gdp))
 
 </iframe>
 
+That got messy! We had a lot of different objects representing intermediate steps in our calculations, but we never need those objects again. Can we avoid creating them?
+
+Let's introduce perhaps the defining feature of the tidyverse: **the pipe**.
+
+Read the pipe (`|>`) as:
+
+Take this `|>` (*and then...*)
+
+do this `|>` (*and then...*)
+
+do this
+
+For example:
+
+```{r}
+gapminder |> 
+  group_by(continent) |> 
+  summarise(avg_pop = mean(pop), avg_gdp_per_cap = mean(gdpPercap)) |>
+  arrange(avg_gdp_per_cap)
+```
+
+Reads as:
+
+1.  Take the `gapminder` data set, and then...
+
+2.  Group it by continent, and then...
+
+3.  Find the average population and GDP per capita for each of those continents, and then...
+
+4.  Sort those summaries by their average GDPs per capita (in ascending order).
+
+You can combine all `tidyverse` functions with the pipe:
+
+```{r}
+gapminder |> 
+  group_by(continent) |> 
+  summarise(avg_pop = mean(pop), avg_gdp_per_cap = mean(gdpPercap)) |> 
+  ggplot(aes(x = continent, y = avg_gdp_per_cap)) + 
+  geom_col() + 
+  theme_minimal()
+```
+
+It is worth noting that there are two versions of the pipe running around. The first `|>` is the **base pipe**. This comes straight out of the box with R. You do not need to load in any packages to use it. The second, `%>%`, is the `tidyverse` pipe. To use it, you need to load in either `dplyr` or the `magrittr` package.
+
+I have switched to using the base pipe, so that's the one you will see in all of my code. You can use whichever you prefer!
+
 ### Exercises
 
-Calculate the average GDP per capita for countries in the Americas in all years including or after 2000.
+Use the pipe to calculate the average GDP per capita for countries in the Americas in all years including or after 2000.
 
 ::: {.callout-note collapse="true"}
 ## Check your answer
@@ -383,9 +617,3 @@ ggplot(gapminder_americas_2000, aes(x = avg_gdp_per_cap, y = reorder(country, av
 
 Note: Check out the scales R package for very handy formatting functions: <https://scales.r-lib.org>.
 :::
-
-## OPTIONAL: Randomization
-
-<iframe class="slide-deck" src="../content/slides/02-08-randomization.html" width="100%" height="600px">
-
-</iframe>
