@@ -1,0 +1,51 @@
+---
+title: "Summarising your data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+```
+
+## Create summaries with `summarise()`
+
+```{r}
+summarise(
+  gapminder, avg_pop = mean(pop), avg_gdp_per_cap = mean(gdpPercap)
+)
+```
+
+## Create summaries with `summarise()`
+
+```{r}
+summarise(
+  gapminder, 
+  avg_pop = mean(pop), 
+  median_pop = median(pop), 
+  avg_gdp_per_cap = mean(gdpPercap),
+  median_gdp_per_cap = median(gdpPercap)
+)
+```
+
+## Creating grouped summaries with `group_by()` and `summarise()`
+
+```{r}
+gapminder_continent <- group_by(gapminder, continent)
+
+summarise(
+  gapminder_continent, 
+  avg_pop = mean(pop), 
+  avg_gdp_per_cap = mean(gdpPercap)
+)
+```

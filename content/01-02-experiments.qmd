@@ -1,5 +1,5 @@
 ---
-title: "Causal Effects and Experiments"
+title: "Causes and Effects"
 format:
   html:
     code-link: true
@@ -12,12 +12,382 @@ execute:
 bibliography: references.bib
 ---
 
-Often political science researchers want to better understand what factors lead to (or cause) certain outcomes of interest. More specifically, they want to know whether changes to some factor cause changes in their outcome of interest. This session introduces you to these concepts and explains how we might go about identifying these causal effects. 
+```{r}
+#| echo: false
 
-<iframe class="slide-deck" src="../content/slides/01-07-experiments.html" width = "100%" height = 600px></iframe>
+library(tidyverse)
+library(DT)
+library(patchwork)
 
-## OPTIONAL: Using randomization to get (nearly) identical groups
+set.seed(1234)
+```
 
-<iframe class="slide-deck" src="../content/slides/01-08-randomization.html" width = "100%" height = 600px></iframe>
+We often want to better understand what factors lead to (or cause) certain outcomes of interest. This session explains how we might go about identifying these causal effects in the real-world.
 
+<iframe class="slide-deck" src="../content/slides/01-07-experiments.html" width="100%" height="600px">
 
+</iframe>
+
+Our goal as political scientists is to explain whether (and why) changes to some features lead to changes in our outcomes of interest. For example:
+
+-   Does increasing the number of voting booths close to a potential voter make that person more likely to vote?
+
+-   Do peace treaties signed with factionalized rebel groups more often lead to a return to conflict than those signed with a single, cohesive group?
+
+-   Does trade between two countries make war between them less likely?
+
+The questions can be reframed as causal statements that can then be tested:
+
+-   More local voting booths lead to an increased likelihood individuals vote.
+
+-   More factionalization among rebel groups lead to a higher likelihood the conflict will restart.
+
+-   More trade between two countries leads to a lower likelihood that war will break out between them.
+
+However, proving that changes to one factor (more local voting booths, factionalization, or trade) caused changes to our outcome of interest is very difficult to do. This is because we need to prove that all the other factors that changed when the factor we focus on changed didn't cause changes to our outcome of interest. How do we do this?
+
+We will spend the whole course answering this question. This session, we are going to focus on experiments, which are often called the "gold-standard" of causal research. To guide us through this session, we are going to look at research conducted by [Professor Susan Hyde](https://polisci.berkeley.edu/people/person/susan-hyde).
+
+## Are election monitors effective at reducing election-day fraud in new democracies?
+
+Hyde was very interested in election fraud. She wanted to uncover what things the international community could do to prevent elections from being stolen. Interestingly for her, she completed her PhD during a time in which the prevalence of international election monitors exploded. There was a sharp increase in the number of elections held in new democracies globally that included international organizations or representatives from other countries monitoring how those elections were run. So, she wanted to know: did these international monitors cause less election-day fraud in democratic elections?
+
+She worked out that, although fraud itself is very difficult to see, its outcome is not. (Effective) cheating parties receive a greater vote share than they would had they not cheated. So, she set out to see whether international election monitors camped out at election booths decreased the vote share won by cheating parties at those booths. In her own words [@hyde2007, 39]:
+
+> If the presence of international observers causes a reduction in election-day fraud, the effect of observers should be visible at the subnational level by comparing polling stations that were visited by observers with those that were not visited. More specifically, if international monitoring reduces electionday fraud directly, all else held equal, the cheating parties should gain less of their ill-gotten vote share in polling stations that were visited by international monitors.
+
+So, Hyde offers the following sequence of causes:
+
+1.  International election monitors cause
+
+2.  Less election-day fraud at the booth at which they are stationed (which we cannot observe directly), which causes
+
+3.  A lower vote-share won by the cheating party than they would otherwise have won (which we can observe directly, *kind of ... stay tuned*).
+
+## Causal relationships
+
+::: callout-warning
+Jargon incoming!
+:::
+
+Hyde is interested in the **causal relationship** between international election monitors and election-day fraud. Formally, a causal relationship refers to the directional connection between a change in one variable and a corresponding change in another.
+
+For causal relationships, direction really matters. You need to prove the following sequence of events:
+
+1.  A change happened to some factor, then:
+
+2.  A change happened to your outcome of interest
+
+Let's label these factors to avoid confusion. The **treatment variable** is the variable causing changes to another variable. It's the one that moves first. The **outcome variable** is the variable changing as a result of changes to another variable (the treatment). It's the one that moves second.
+
+Hyde wanted to test whether the presence of international monitors (the treatment) leads to less election day fraud (the outcome).
+
+Focus for a moment on the treatment variable. At any given polling station in any given election, monitors may be: 1) present, or 2) not present. We, therefore, have two conditions:
+
+1.  **Treatment:** monitors are present
+
+2.  **Control:** monitors are not present
+
+## Individual causal effects
+
+We want to know whether the treatment *causes* a change in our outcome of interest. To do this, we want to compare the vote share the cheating party received at the voting booth with election monitors present (under treatment) to that it received at the voting booth without election monitors present (under control). Huh...
+
+Let's step through this with a concrete example. Imagine that we are looking at a specific election held within a new democracy. There are 10 election booths set up for the election.
+
+In an ideal world, we would run the election with no monitors and record the vote share each party received at each booth. We would then jump in our very handy time machine and go back to the start of the election. We would station monitors at every booth, run the election, and record the vote share each party received.
+
+We could then directly compare the vote share each party received at each booth with and without monitors (in treatment and control). If Hyde's hypothesis is correct, we should see that the cheating party receives a lower vote share in the timeline with election monitors than it does in the timeline without them.
+
+For example, imagine that the following results were recorded for the cheating party at each of the 1,000 booths in both timelines:
+
+```{r}
+#| echo: false
+
+n <- 1000
+
+indiv_effect_df <- tibble(
+  polling_station_id = 1:n,
+  vote_share_monitored = rbeta(n, 4, 6),
+  vote_share_not_monitored = rbeta(n, 11, 2),
+  difference = vote_share_monitored - vote_share_not_monitored
+)
+
+indiv_effect_df |> 
+  mutate(across(vote_share_monitored:vote_share_not_monitored, 
+                ~ scales::percent(.x, accuracy = 0.1))) |> 
+  select(polling_station_id:vote_share_not_monitored) |> 
+  rename(ID = polling_station_id,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored) |> 
+  datatable(rownames = F, options = list(pageLength = 10, dom = 'tip'))
+  
+```
+
+Because the only difference between these two versions of the election was the presence of election monitors, we can definitively state that the difference in vote shares won by each party was *caused by the monitors*. Let's calculate those differences:
+
+```{r}
+indiv_effect_df |> 
+  mutate(across(vote_share_monitored:difference, 
+                ~ scales::percent(.x, accuracy = 0.1))) |> 
+  rename(ID = polling_station_id,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  datatable(rownames = F, options = list(pageLength = 10, dom = 'tip'))
+```
+
+In this hypothetical election, these differences are substantial! They are often the difference between a decisive victory and an embarrassing defeat.
+
+## Average causal effects
+
+Sadly for us, however, we are yet to invent time machines. We cannot observe both the treatment and control for each individual booth. Rather what we see is the following:
+
+```{r}
+#| echo: false
+
+factual_indiv_df <- indiv_effect_df |> 
+  mutate(monitored = rbinom(n, 1, 0.5),
+         vote_share_monitored = if_else(monitored == 1, vote_share_monitored, NA_real_),
+         vote_share_not_monitored = if_else(monitored == 0, vote_share_not_monitored, NA_real_),
+         difference = vote_share_monitored - vote_share_not_monitored,
+         monitored = factor(monitored, labels = c("No", "Yes"))) |> 
+  relocate(monitored, .after = polling_station_id)
+
+factual_indiv_df |> 
+  mutate(across(vote_share_monitored:difference, 
+                ~ scales::percent(.x, accuracy = 0.1))) |> 
+  rename(ID = polling_station_id,
+         Monitored = monitored,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  datatable(rownames = F, options = list(pageLength = 10, dom = 'tip'))
+```
+
+We are, essentially, missing data for the **counter-factual** for each booth. We cannot, therefore, calculate the difference and identify the causal effect of election monitors for each individual booth. So, now what?
+
+We need to move away from looking at individuals and start to look for patterns in our group. Let's return to our two timelines. What was the difference between the vote share won by the cheating party with and without election monitors *on average across all booths?*
+
+```{r}
+#| echo: false
+
+indiv_avg_df <- indiv_effect_df |> 
+  summarise(vote_share_monitored = mean(vote_share_monitored),
+            vote_share_not_monitored = mean(vote_share_not_monitored),
+            difference = mean(difference)) |> 
+  mutate(across(everything(), ~ scales::percent(.x, accuracy = 0.1)))
+
+indiv_avg_df |> 
+  rename(`Avg. monitored vote %` = vote_share_monitored,
+         `Avg. non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
+```
+
+Okay, what is the difference, on average, in our real world?
+
+```{r}
+#| echo: false
+
+factual_avg_df <- factual_indiv_df |> 
+  summarise(vote_share_monitored = mean(vote_share_monitored, na.rm = T),
+            vote_share_not_monitored = mean(vote_share_not_monitored, na.rm = T),
+            difference = vote_share_monitored - vote_share_not_monitored) |>    mutate(across(everything(), ~ scales::percent(.x, accuracy = 0.1)))
+
+factual_avg_df |> 
+  rename(`Avg. monitored vote %` = vote_share_monitored,
+         `Avg. non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
+```
+
+The average difference with missing counter-factuals is very close to that with full information (that relies on that handy time machine). How does this work so well?
+
+## Randomization
+
+Through randomization! I assigned monitors to the 1,000 voting booths randomly. For each booth, I flipped a (R generated) coin to decide whether that booth would be monitored. At the end of that process, roughly half of the booths had monitors and half did not:
+
+```{r}
+#| echo: false
+
+factual_indiv_df |> 
+  count(monitored) |> 
+  rename(Monitored = monitored,
+         `No. of booths` = n) |> 
+  knitr::kable()
+```
+
+The magic trick with random assignment is that you tend to end up with two groups that are roughly identical to one another prior to treatment, **on average**. Remember, our goal is to create two groups (treatment and control) that are identical to one another prior to treatment. If the only difference between the groups is the treatment, we can say that any differences in our outcome of interest is *caused by the treatment*.
+
+Absent a time machine, we then need to set about creating two groups that are as identical to each other as possible. It turns out that random assignment does a very good job of achieving this.
+
+::: callout-note
+Practitioners have come up with other clever ways of doing this, including **pairwise matching**. We will not cover those in this course.
+:::
+
+You don't need to take my word for this. Let's prove it with simulation! Imagine we have a group of 1,000 individuals. We know the following about them:
+
+-   Height
+
+-   Weight
+
+-   Eye colour
+
+Here are those data:
+
+```{r}
+#| echo: false
+
+group_df <- tibble(
+  id = 1:1000,
+  height = rnorm(1000, 170, 6),
+  weight = rnorm(1000, 80, 10),
+  eye_colour = sample(c("Blue", "Green", "Brown", "Grey"), 1000, replace = T)
+) 
+
+group_df |> 
+  mutate(across(height:weight, ~ round(.x, 2))) |> 
+  rename(ID = id,
+         Height = height, 
+         Weight = weight, 
+         `Eye colour` = eye_colour) |> 
+  datatable(rownames = F, options = list(pageLength = 10, dom = 'tip'))
+```
+
+I'm now going to flip (an imaginary, R-generated) coin for each of these 1,000 individuals to assigned them to either group A or B:
+
+```{r}
+#| echo: false
+
+rand_group <- group_df |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+rand_group |> 
+  mutate(across(height:weight, ~ round(.x, 2))) |> 
+  rename(ID = id,
+         Height = height, 
+         Weight = weight, 
+         `Eye colour` = eye_colour, 
+         Group = group) |> 
+  datatable(rownames = F, options = list(pageLength = 10, dom = 'tip'))
+```
+
+Now we can check how similar these two groups are to one another. Let's start with their heights:
+
+```{r}
+#| echo: false
+
+ggplot(rand_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+```
+
+The distribution of heights among individuals in groups A and B are roughly identical. The average height of individuals in group A is `r rand_group |> filter(group == "A") |> summarise(x = mean(height)) |> pull() |> round(1)` cm and in group B is `r rand_group |> filter(group == "B") |> summarise(x = mean(height)) |> pull() |> round(1)` cm. Pretty neat!
+
+Let's check their weight:
+
+```{r}
+#| echo: false
+
+ggplot(rand_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+```
+
+Similarly, the distribution of weights among individuals in groups A and B are roughly identical. On average, individuals in group A weigh `r rand_group |> filter(group == "A") |> summarise(x = mean(weight)) |> pull() |> round(1)` kg. Individuals in group B weigh `r rand_group |> filter(group == "B") |> summarise(x = mean(weight)) |> pull() |> round(1)` kg, on average.
+
+Finally, let's look at eye colour:
+
+```{r}
+#| echo: false
+
+rand_group |> 
+  count(group, eye_colour) |> 
+  group_by(group) |>
+  mutate(prop = n / sum(n)) |> 
+  ggplot(aes(x = prop, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Percent of individuals",
+       y = "Eye color",
+       fill = "Group") + 
+  scale_x_continuous(labels = scales::percent)
+```
+
+Again, the proportion of individuals within each group with each eye colour are roughly identical. This is all due to random assignment.
+
+Let's repeat this process, assigning our 1,000 individuals randomly to each group, and make sure this wasn't a fluke:
+
+```{r}
+#| echo: false
+
+rand_group <- group_df |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+rand_group |> 
+  mutate(across(height:weight, ~ round(.x, 2))) |> 
+  rename(ID = id,
+         Height = height, 
+         Weight = weight, 
+         `Eye colour` = eye_colour, 
+         Group = group) |> 
+  datatable(rownames = F, options = list(pageLength = 10, dom = 'tip'))
+```
+
+And let's see how similar these new, randomly-assigned groups are to each other:
+
+```{r}
+#| echo: false
+
+p1 <- ggplot(rand_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+
+p2 <- ggplot(rand_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+
+p3 <- rand_group |> 
+  count(group, eye_colour) |> 
+  group_by(group) |>
+  mutate(prop = n / sum(n)) |> 
+  ggplot(aes(x = prop, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Percent of individuals",
+       y = "Eye color",
+       fill = "Group") + 
+  scale_x_continuous(labels = scales::percent)
+
+p1 | p2 | p3
+```
+
+Again, these two groups are nearly identical to one another, on average. In fact, if we did this many, many, many times, these groups would be, on average, increasingly identical.
+
+::: callout-note
+## Why?
+
+Because of the **Central Limit Theorem** and **Law of Large Numbers**. We will talk about these two concepts later in the course.
+:::
+
+## Returning to our question
+
+So, do international election monitors deter election-fraud? Yes! The international community monitored the 2003 Armenian Presidential elections. Monitors were assigned randomly to the polling stations. Hyde found a large difference between the vote share received by the cheating party at monitored stations compared to non-monitored stations, on average.

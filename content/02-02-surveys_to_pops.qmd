@@ -1,0 +1,18 @@
+---
+title: "From Surveys to Populations"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+---
+
+A lot the data we use in political science research are incomplete. Rarely do we have data on all individual actors within our population of interest. We, therefore, need the tools to be able to determine the degree to which the data we have on our sample of actors resembles what we would see in the population.
+
+<iframe class="slide-deck" src="../content/slides/02-08-randomization.html" width="100%" height="600px">
+
+</iframe>

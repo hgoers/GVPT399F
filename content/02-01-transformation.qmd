@@ -1,0 +1,330 @@
+---
+title: "Data Transformation"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+```
+
+This section focuses on introducing you to some new R skills. Data rarely come to us perfectly formatted and without annoying errors or inconsistencies. We can use R to clean our data up and get them ready for analysis.
+
+## Gapminder
+
+This session, we will explore the long-studied relationship between countries' health and wealth. Attention was brought to this relationship by the Gapminder project. You can read more about their research [here](https://www.gapminder.org/).
+
+Before we get started, check out this video that describes (very enthusiastically) the relationship between health and wealth:
+
+{{< video https://www.youtube.com/embed/jbkSRLYSojo width="100%" height="600px" >}}
+
+<iframe class="slide-deck" src="../content/slides/02-01-transformation_intro.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+What is the unit of observation for the `gapminder` data set?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+The unit of observation is country-year.
+:::
+
+How many country-years are included in the `gapminder` data set?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+nrow(gapminder)
+```
+:::
+
+Which two variables in the `gapminder` data set are factors?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+`country` and `continent` are factors (or categorical variables).
+:::
+
+## Filtering your data
+
+<iframe class="slide-deck" src="../content/slides/02-02-filter.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+Find all country-years that have populations greater than 1 billion people.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+filter(gapminder, pop > 1e9)
+```
+
+Note: `1e9` is scientific notation for 1 billion (which has nine zeros).
+:::
+
+Find all countries in Oceania.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+filter(gapminder, continent == "Oceania")
+```
+:::
+
+Find all countries in both Asia and Europe.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+filter(gapminder, continent %in% c("Asia", "Europe"))
+```
+:::
+
+Find all country-years that have a life expectancy greater than 50 years and less than 60 years.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+filter(gapminder, lifeExp > 50 & lifeExp < 60)
+```
+:::
+
+Find all country-years that have a life expectancy less than 50 years or greater than 60 years.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+filter(gapminder, lifeExp < 50 | lifeExp > 60)
+```
+:::
+
+## Sorting your data
+
+<iframe class="slide-deck" src="../content/slides/02-03-arrange.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+Which country-year has the lowest life expectancy?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+arrange(gapminder, lifeExp)
+```
+
+Note: check out `slice_min()` and `slice_max()` for more efficient ways of doing this.
+:::
+
+Which country-year has the largest population?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+arrange(gapminder, desc(pop))
+```
+
+Note: check out `slice_min()` and `slice_max()` for more efficient ways of doing this.
+:::
+
+## Selecting relevant columns
+
+<iframe class="slide-deck" src="../content/slides/02-04-select.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+Select only the country, year, and lifeExp variables from gapminder.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+select(gapminder, country, year, lifeExp)
+```
+:::
+
+What does the `any_of()` function do? Why might it be helpful in conjunction with this vector?
+
+```{r}
+vars <- c("country", "year", "lifeExp", "boop")
+```
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+select(gapminder, any_of(vars))
+```
+:::
+
+What does the following code produce?
+
+```{r}
+#| eval: false
+
+select(gapminder, starts_with("c"))
+```
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+select(gapminder, starts_with("c"))
+```
+:::
+
+## Create or change columns of data
+
+<iframe class="slide-deck" src="../content/slides/02-05-mutate.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+Create a new variable that provides each country-year's GDP (which you can get by multiplying its GDP with its population).
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+mutate(gapminder, gdp = gdpPercap * pop)
+```
+:::
+
+Create a new data set that only includes information on each country-year's name, year, and GDP.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+transmute(gapminder, country, year, gdp = gdpPercap * pop)
+```
+:::
+
+## Summarize your data
+
+<iframe class="slide-deck" src="../content/slides/02-06-summarise.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+Calculate each country-year's GDP.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+mutate(gapminder, gdp = pop * gdpPercap)
+```
+:::
+
+Find each country's average GDP across all years in the `gapminder` data set.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+gapminder_country <- group_by(gapminder, country)
+
+gapminder_country_avg <- summarise(
+  mutate(gapminder_country, gdp = pop * gdpPercap), avg_gdp = mean(gdp)
+)
+
+gapminder_country_avg
+```
+:::
+
+Find the country with the smallest average GDP across these years.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+arrange(gapminder_country_avg, avg_gdp)
+```
+:::
+
+Find the country with the largest average GDP across these years.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+arrange(gapminder_country_avg, desc(avg_gdp))
+```
+:::
+
+## The pipe
+
+<iframe class="slide-deck" src="../content/slides/02-07-pipe.html" width="100%" height="600px">
+
+</iframe>
+
+### Exercises
+
+Calculate the average GDP per capita for countries in the Americas in all years including or after 2000.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+gapminder_americas_2000 <- gapminder |> 
+  filter(continent == "Americas", year > 2000) |> 
+  group_by(country) |> 
+  summarise(avg_gdp_per_cap = mean(gdpPercap))
+
+gapminder_americas_2000
+```
+:::
+
+Plot your results.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+ggplot(gapminder_americas_2000, aes(x = avg_gdp_per_cap, y = reorder(country, avg_gdp_per_cap))) + 
+  geom_col() +
+  theme_minimal() + 
+  labs(title = "Average GDP per capita for countries in the Americas in 2002 and 2007",
+       x = "Average GDP per capita (US$)",
+       y = NULL) + 
+  scale_x_continuous(labels = scales::label_dollar())
+```
+
+Note: Check out the scales R package for very handy formatting functions: <https://scales.r-lib.org>.
+:::
+
+## OPTIONAL: Randomization
+
+<iframe class="slide-deck" src="../content/slides/02-08-randomization.html" width="100%" height="600px">
+
+</iframe>

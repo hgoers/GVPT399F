@@ -13,8 +13,8 @@ format:
 course-logo: /files/img/hex-testudo.png
 ---
 
-::: home
-::: {.grid .course-details}
+::::::: home
+:::::: {.grid .course-details}
 ::: {.g-col-12 .g-col-sm-6 .g-col-md-4}
 ### Lecturer
 
@@ -42,5 +42,5 @@ course-logo: /files/img/hex-testudo.png
 
 {{< var instructor.contact_policy >}}
 :::
-:::
-:::
+::::::
+:::::::

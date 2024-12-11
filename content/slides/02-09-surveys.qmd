@@ -1,0 +1,164 @@
+---
+title: "From Surveys to Populations"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  warning: false
+  fig-align: "center"
+bibliography: references.bib
+---
+
+```{r}
+#| echo: false 
+
+library(tidyverse)
+```
+
+## Surveys
+
+-   Populations are very difficult to collect data on
+
+    -   Even the census misses people!
+
+-   Happily, we can use surveys of a sample of our population to learn things about our population
+
+-   However, our ability to do this is conditional on how good our sample is
+
+-   What do I mean by "good"?
+
+## The 2024 US Presidential Election
+
+-   Elections are preceded by a flood of surveys
+
+## Surveys
+
+-   Surveys are conducted on a subset (**sample**) of the population of interest
+
+-   Our population of interest: individuals who voted in the 2024 US Presidential Election
+
+## A good sample
+
+-   A good sample is a **representative one**
+
+-   How closely does our sample reflect our population
+
+## Parallel worlds
+
+-   Remember back to last session on experiments
+
+-   In an ideal world, we would be able to create two parallel worlds (one with the treatment, one held as our control)
+
+    -   One version of the election booth run without monitors (the control)
+
+    -   One version with monitors (the treatment)
+
+-   These worlds are perfectly identical to each other prior to treatment
+
+-   We cannot do this :(
+
+## The next best thing
+
+-   Our next best option is to create two groups that were as identical to one another as possible prior to treatment
+
+-   If they are (almost) identical, differences between their group-wide outcomes can be attributed to the treatment
+
+-   One good way of getting two (almost) identical groups is to assign individuals to those groups **randomly**
+
+    -   Think back to our 1,000 hypothetical people!
+
+## Randomization
+
+-   Randomization continues to pop its chaotic head up
+
+-   We can use it to create a sample that is (almost) identical to our population, on average
+
+-   Drawing randomly from our population increases our chances of ending up with a sample that reflects that population
+
+-   This would be referred to as a **representative sample**
+
+## Random sampling
+
+-   All individuals in the population need to have an equal chance of being selected for the sample
+
+    -   If this holds, you have a **pure random sample**
+
+-   This is really hard to do!
+
+    -   How likely were you to answer the pollster's unknown number, calling you in the middle of the day?
+
+    -   Even if you did answer, how likely were you to answer all their questions?
+
+## Large numbers
+
+-   Randomization isn't enough: we also need to draw a sufficiently large sample from our population
+
+    -   One person pulled randomly from the class isn't going to be very reflective of the class!
+
+## To illustrate
+
+Countries' GDP in 2022:
+
+```{r}
+#| echo: false
+
+gdp_df <- wbstats::wb_data("NY.GDP.MKTP.CD", 
+                           return_wide = F,
+                           start_date = 2022,
+                           end_date = 2022) |> 
+  mutate(sample_value = if_else(value < 31514830422 & rbinom(1, 1, 0.5) == 1,
+                                NA,
+                                value))
+
+ggplot(gdp_df, aes(x = value / 1e9)) + 
+  geom_histogram() + 
+  theme_minimal() + 
+  labs(x = "GDP (USD billions)",
+       y = "Count") +
+  scale_x_continuous(labels = scales::dollar)
+```
+
+## Countries' GDP
+
+I want to estimate the average GDP across all countries in 2022.
+
+-   I send out a survey to all countries' Departments of Statistics and ask for their GDP figures for 2022.
+
+-   I get 60 responses:
+
+```{r}
+
+sample_df <- gdp_df |> 
+  drop_na(sample_value) |> 
+  sample_n(size = 60) |> 
+  transmute(country, gdp = sample_value)
+
+sample_df
+```
+
+## Countries' GDP
+
+I now calculate the average of these responses, which I find to be:
+
+```{r}
+
+sample_df |> 
+  summarise(avg_gdp = scales::dollar(mean(gdp, na.rm = T)))
+```
+
+Now, imagine that we knew definitively that it was `r scales::dollar(mean(gdp_df$value))`. Why such a large difference?
+
+## Non-response bias
+
+Poorer countries are far less likely to be able or willing to provide these economic data to academics or international organizations.
+
+-   They tend to be underrepresented in a lot of data
+
+My sample was biased against poorer countries.
+
+-   They were not equally likely to respond to my request for data as rich countries

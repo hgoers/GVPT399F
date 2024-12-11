@@ -50,7 +50,7 @@ Proving that changes to one factor *cause* changes to another is very tricky!
 
 Do international monitors cause less election-day fraud in democratic elections?
 
--   Number of elections monitored by international observers increased throughout the 2000s
+-   Number of elections monitored by international observers exploded throughout the 2000s
 
 -   But do monitors increase the chances the election will be free and fair?
 
@@ -106,15 +106,15 @@ Outcome variables also do not need to binary.
 
 ## Observing our outcome
 
-Sometimes it can be hard to observe our outcome of interest. 
+Sometimes it can be hard to observe our outcome of interest.
 
--   How might we see all election-day fraud? 
+-   How might we see all election-day fraud?
 
 -   How might we measure it?
 
 ## Observing our outcome
 
-Hyde's answer: vote-share! 
+Hyde's answer: vote-share!
 
 *International election monitors present at polling stations* $\rightarrow$ *Less election-day fraud at that station* $\rightarrow$ *Lower vote-share for the cheating party*
 
@@ -122,17 +122,15 @@ Hyde's answer: vote-share!
 
 We want to know whether the treatment *causes* a change in our outcome of interest.
 
+What might this look like in the real world?
+
+-   Imagine we are looking at a specific election
+
+-   Five polling stations
+
+## Parallel worlds
+
 ![](img/indiv_exp.png){fig-align="center"}
-
-## Individual causal effects
-
-What might this look like in the real world? 
-
--   Imagine we are looking at a specific election 
-
--   100 polling stations
-
--   Measure the vote share received by the cheating party
 
 ## Hypothetical election
 
@@ -140,12 +138,16 @@ What might this look like in the real world?
 #| echo: false
 
 indiv_effect_df <- tibble(
-  polling_station_id = 1:100,
-  vote_share_monitored = round(rbeta(100, 4, 6) * 100, 2),
-  vote_share_not_monitored = round(rbeta(100, 11, 2) * 100, 2)
+  polling_station_id = 1:5,
+  vote_share_monitored = round(rbeta(5, 4, 6) * 100, 2),
+  vote_share_not_monitored = round(rbeta(5, 11, 2) * 100, 2)
 )
 
-indiv_effect_df
+indiv_effect_df |> 
+  rename(ID = polling_station_id,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored) |> 
+  knitr::kable()
 ```
 
 ## Individual effects
@@ -160,32 +162,37 @@ The *only* difference between these two conditions is the presence of internatio
 #| echo: false
 
 indiv_effect_df |> 
-  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+  mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
+  rename(ID = polling_station_id,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored,
+         `Difference (%)` = difference) |> 
+  knitr::kable()
 ```
 
 ## No parallel worlds
 
 Sadly for us, we cannot create parallel worlds...
 
+## What now?
+
 ```{r}
 #| echo: false
 
 factual_indiv_df <- indiv_effect_df |> 
-  mutate(monitored = rbinom(100, 1, 0.5),
+  mutate(monitored = rbinom(5, 1, 0.5),
          vote_share_monitored = if_else(monitored == 1, vote_share_monitored, NA_real_),
          vote_share_not_monitored = if_else(monitored == 0, vote_share_not_monitored, NA_real_)) |> 
   relocate(monitored, .after = polling_station_id)
 
-factual_indiv_df
-```
-
-## What now? 
-
-```{r}
-#| echo: false
-
 factual_indiv_df |> 
-  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+  mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
+  rename(ID = polling_station_id,
+         Monitored = monitored,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
 ```
 
 ## Average causal effects
@@ -198,21 +205,30 @@ We need to move away from looking at individuals and start to look for patterns 
 #| echo: false
 
 indiv_effect_df |> 
-  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+  mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
+  rename(ID = polling_station_id,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
 ```
 
-## Difference of averages across all individuals 
+## Difference of averages across all individuals
 
-What was the average vote share received in each world? 
+What was the average vote share received in each world?
 
 ```{r}
 #| echo: false
 
 indiv_effect_df |> 
   mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
-  summarise(vote_share_monitored = mean(vote_share_monitored),
-            vote_share_not_monitored = mean(vote_share_not_monitored),
-            difference = vote_share_monitored - vote_share_not_monitored)
+  summarise(vote_share_monitored = round(mean(vote_share_monitored), 2),
+            vote_share_not_monitored = round(mean(vote_share_not_monitored), 2),
+            difference = vote_share_monitored - vote_share_not_monitored) |> 
+  rename(`Avg. monitored vote %` = vote_share_monitored,
+         `Avg. non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
 ```
 
 ## Back to reality
@@ -221,12 +237,18 @@ indiv_effect_df |>
 #| echo: false
 
 factual_indiv_df |> 
-  mutate(difference = vote_share_monitored - vote_share_not_monitored)
+  mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
+  rename(ID = polling_station_id,
+         Monitored = monitored,
+         `Monitored vote %` = vote_share_monitored,
+         `Non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
 ```
 
 ## Difference-of-means
 
-What was the average vote share received in each group? 
+What was the average vote share received in each group?
 
 ```{r}
 #| echo: false
@@ -235,10 +257,15 @@ factual_indiv_df |>
   mutate(difference = vote_share_monitored - vote_share_not_monitored) |> 
   summarise(vote_share_monitored = mean(vote_share_monitored, na.rm = T),
             vote_share_not_monitored = mean(vote_share_not_monitored, na.rm = T),
-            difference = vote_share_monitored - vote_share_not_monitored)
+            difference = vote_share_monitored - vote_share_not_monitored) |> 
+  mutate(across(everything(), ~ round(.x, 2))) |> 
+  rename(`Avg. monitored vote %` = vote_share_monitored,
+         `Avg. non-monitored vote %` = vote_share_not_monitored,
+         Difference = difference) |> 
+  knitr::kable()
 ```
 
-## How on Earth does this work so well? 
+## How on Earth does this work so well?
 
 Randomization!
 
@@ -248,17 +275,201 @@ Randomization!
 
 -   This mimics what happens when we split our world into two (creating two literally identical groups)
 
-::: {.aside}
-I will demonstrate how this works in a short, optional video below.  
+## Our goal
+
+We want two groups that are completely identical to one another prior to treatment.
+
+-   This allows us to compare their outcomes after treatment and claim that the treatment *caused* differences in those outcomes (if any differences exist)
+
+## Our goal
+
+![](img/indiv_exp.png){fig-align="center"}
+
+## Next best thing
+
+Instead, we should try to make two groups that are as similar as possible to each other prior to treatment.
+
+## The magic of randomization
+
+Perfectly random assignment does this very well!
+
+![](img/coin.webp){fig-align="center"}
+
+## Don't take my word for it
+
+Imagine we have a group of 1,000 individuals. We know the following about them:
+
+-   Height
+
+-   Weight
+
+-   Eye colour
+
+## Our group
+
+```{r}
+#| echo: false
+
+group_df <- tibble(
+  id = 1:1000,
+  height = rnorm(1000, 170, 6),
+  weight = rnorm(1000, 80, 10),
+  eye_colour = sample(c("Blue", "Green", "Brown", "Grey"), 1000, replace = T)
+) 
+
+group_df |> 
+  mutate(across(height:weight, ~ round(.x, 2))) |> 
+  rename(ID = id,
+         Height = height, 
+         Weight = weight, 
+         `Eye colour` = eye_colour) |> 
+  knitr::kable()
+```
+
+## Random assignment
+
+I'm now going to flip (an imaginary, computer-generated) coin for each of these 1,000 individuals to assigned them to group A or B:
+
+```{r}
+#| echo: false
+
+rand_group <- group_df |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+rand_group |> 
+  mutate(across(height:weight, ~ round(.x, 2))) |> 
+  rename(ID = id,
+         Height = height, 
+         Weight = weight, 
+         `Eye colour` = eye_colour, 
+         Group = group) |> 
+  knitr::kable()
+```
+
+## How similar are these groups?
+
+Let's first check their heights:
+
+```{r}
+#| echo: false
+
+ggplot(rand_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+```
+
+## How similar are these groups?
+
+And their weights:
+
+```{r}
+#| echo: false
+
+ggplot(rand_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+```
+
+## How similar are these groups?
+
+And their eye colors:
+
+```{r}
+#| echo: false
+
+rand_group |> 
+  count(group, eye_colour) |> 
+  ggplot(aes(x = n, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Count",
+       y = "Eye color",
+       fill = "Group")
+```
+
+## Making sure this wasn't a fluke
+
+Let's re-run this:
+
+```{r}
+#| echo: false
+
+rand_group <- rand_group |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+rand_group |> 
+  mutate(across(height:weight, ~ round(.x, 2))) |> 
+  rename(ID = id,
+         Height = height, 
+         Weight = weight, 
+         `Eye colour` = eye_colour, 
+         Group = group) |> 
+  knitr::kable()
+```
+
+## Check how similar they are
+
+```{r}
+#| echo: false
+
+library(patchwork)
+
+p1 <- ggplot(rand_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+
+p2 <- ggplot(rand_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+
+p3 <- rand_group |> 
+  count(group, eye_colour) |> 
+  ggplot(aes(x = n, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Count",
+       y = "Eye color",
+       fill = "Group")
+
+p1 | p2 | p3
+```
+
+## Increasingly similar
+
+In fact, if we did this many, many, many times, these groups would be, on average, increasingly identical!
+
+Why?
+
+-   Central limit theorem
+
+-   Law of large numbers
+
+::: aside
+We will talk more about those concepts later in the course.
 :::
 
-## Do international monitors deter election-day fraud? 
+## Do international monitors deter election-day fraud?
 
-Yes! 
+Yes!
 
 -   The international community monitored the 2003 Armenian Presidential elections
 -   Monitors were assigned randomly to the polling stations
--   Hyde found a big average difference between the vote share received by the cheating party at monitored stations compared to non-monitored stations.  
-
-
-
+-   Hyde found a big average difference between the vote share received by the cheating party at monitored stations compared to non-monitored stations.

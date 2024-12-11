@@ -30,10 +30,13 @@ website:
           contents:         
             - content/01-01-visualization.qmd         
             - content/01-02-experiments.qmd
+        - section: "Session 2"
+          contents: 
+            - content/02-01-transformation.qmd
+#            - content/02-02-surveys_to_pops.qmd
         - section: "Additional resources"
           contents: 
             - resources/quarto.qmd
-        
         
   page-footer:
     left: |

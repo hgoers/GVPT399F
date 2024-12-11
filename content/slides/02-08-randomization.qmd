@@ -1,0 +1,157 @@
+---
+title: "ADVANCED: Randomization"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+```
+
+## Randomization
+
+-   Last session, we randomly assigned 1,000 hypothetical people to two different groups
+
+-   Testing whether randomization helps us create two roughly identical groups prior to treatment
+
+-   You now have a lot of the R code needed to replicate that analysis
+
+## Creating our group of 1,000 people
+
+Imagine we have a group of 1,000 individuals. We know the following about them:
+
+-   Height
+
+-   Weight
+
+-   Eye colour
+
+## Creating our group of 1,000 people
+
+```{r}
+
+group_df <- tibble(
+  id = 1:1000,
+  height = rnorm(1000, 170, 6),
+  weight = rnorm(1000, 80, 10),
+  eye_colour = sample(c("Blue", "Green", "Brown", "Grey"), 
+                      1000, 
+                      replace = T)
+)
+
+group_df
+```
+
+## The Normal distribution
+
+```{r}
+
+ggplot() + 
+  geom_density(aes(x = rnorm(n = 1e6, mean = 0, sd = 1))) + 
+  theme_minimal()
+```
+
+## Random sampling from the Normal distribution
+
+I can take a random sample of `n` values from a Normal distribution centered at some mean with a specific standard deviation.
+
+-   By default, `rnorm()` takes a mean of `0` and a standard deviation of `1`
+
+-   The following code takes 1,000 random samples from that default Normal distribution
+
+::: aside
+If this is all nonsense to you, don't worry! I will step through this in a lot more detail later in the course.
+:::
+
+## Random sampling from the Normal distribution
+
+```{r}
+
+rnorm(n = 1000, mean = 0, sd = 1)
+```
+
+## Random assignment using the Binomial Distribution
+
+Remember, we then randomly assigned them to one of two groups: A or B.
+
+-   I used random draws from the Binomial (read: binary or two) distribution to do this.
+
+::: aside
+Again, do not worry if this does not make sense! Abandon this ship and go and do something more pleasant with your afternoon! We will come back to this later.
+:::
+
+## Random assignment using the Binomial Distribution
+
+```{r}
+
+rbinom(n = 1000, size = 1, prob = 0.5)
+```
+
+## The Binomial Distribution
+
+```{r}
+ggplot() + 
+  geom_bar(aes(x = rbinom(n = 1e6, size = 1, prob = 0.5))) + 
+  theme_minimal()
+```
+
+## Assigning our people with `mutate()`
+
+```{r}
+assigned_group <- group_df |> 
+  mutate(
+    group = rbinom(1000, 1, 0.5),
+    group = factor(group, labels = c("A", "B"))
+  )
+
+assigned_group
+```
+
+## Comparing our two groups
+
+```{r}
+#| echo: false
+
+ggplot(assigned_group, aes(x = height, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Height (cm)",
+       y = "Density",
+       fill = "Group")
+```
+
+## Comparing our two groups
+
+```{r}
+#| echo: false
+
+ggplot(assigned_group, aes(x = weight, fill = group)) + 
+  geom_density(alpha = 0.5) + 
+  theme_minimal() + 
+  labs(x = "Weight (kg)",
+       y = "Density",
+       fill = "Group")
+```
+
+## Comparing our two groups
+
+```{r}
+#| echo: false
+
+assigned_group |> 
+  count(group, eye_colour) |> 
+  ggplot(aes(x = n, y = reorder(eye_colour, n), fill = group)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  labs(x = "Count",
+       y = "Eye color",
+       fill = "Group")
+```

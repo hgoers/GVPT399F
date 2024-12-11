@@ -16,7 +16,6 @@ execute:
 #| echo: false
 
 library(tidyverse)
-library(ggthemes)
 ```
 
 ## Working with categorical data
@@ -56,13 +55,6 @@ ggplot(mpg, aes(x = hwy)) +
 
 ```{r}
 ggplot(mpg, aes(x = hwy)) +
-  geom_density()
-```
-
-## Visualizing numeric variables
-
-```{r}
-ggplot(mpg, aes(x = hwy, colour = drv)) +
   geom_density()
 ```
 

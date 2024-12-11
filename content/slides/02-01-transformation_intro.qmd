@@ -1,0 +1,117 @@
+---
+title: "Data Transformation"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+## Learning objectives
+
+1.  Learn basic operations in R
+
+2.  Be introduced to `dplyr`
+
+3.  Clean up and transform your data
+
+## R objects
+
+Create new objects with `<-`
+
+```{r}
+x <- 3 * 4
+
+x
+```
+
+<br>
+
+```{r}
+x <- 3 * 10
+
+x
+```
+
+::: aside
+Some people use `=` instead of `<-`. I strongly recommend against this. It makes your script difficult to read, and it can lead to syntax errors.
+:::
+
+## R functions
+
+Many functions come with R straight out of the box:
+
+```{r}
+seq(1, 10)
+```
+
+<br>
+
+You can create objects using functions:
+
+```{r}
+x <- seq(1, 10)
+
+x
+```
+
+## Gapminder
+
+First, you need to install the `gapminder` package:
+
+```{r}
+#| eval: false
+
+install.packages("gapminder")
+```
+
+Then access the `gapminder` data set:
+
+```{r}
+library(tidyverse)
+library(gapminder)
+
+head(gapminder)
+```
+
+## Data types
+
+In `gapminder`:
+
+-   `fctr` stands for factors, which R uses to represent categorical variables with fixed possible values.
+
+-   `int` stands for integer.
+
+-   `dbl` stands for doubles (or real numbers).
+
+## Data types
+
+Other types:
+
+-   `chr` stands for character vectors, or strings.
+
+-   `dttm` stands for date-times (a date + a time).
+
+-   `lgl` stands for logical, vectors that contain only `TRUE` or `FALSE`.[^1]
+
+[^1]: `TRUE` can be shortened to `T` and `FALSE` can be shortened to `F`.
+
+## Introducing `dplyr`
+
+*Help you with most of your data transformation needs.*
+
+Five basic functions:
+
+-   `filter()`
+
+-   `arrange()`
+
+-   `select()`
+
+-   `mutate()`
+
+-   `summarise()`

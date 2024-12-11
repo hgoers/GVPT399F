@@ -1,0 +1,43 @@
+---
+title: "Sorting Your Data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+## Arrange rows with `arrange()`
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+```
+
+```{r}
+arrange(gapminder, country, year)
+```
+
+## Arrange rows with `arrange()`
+
+```{r}
+arrange(gapminder, country, desc(year))
+```
+
+## Get the smallest or largest value in one line of code
+
+```{r}
+slice_min(gapminder, lifeExp)
+```
+
+<br>
+
+```{r}
+slice_max(gapminder, lifeExp)
+```

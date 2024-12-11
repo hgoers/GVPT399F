@@ -1,0 +1,85 @@
+---
+title: "The pipe"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+```
+
+## Combine multiple operations with the pipe
+
+That got messy!
+
+-   We had a lot of different objects representing intermediate steps in our calculations.
+
+-   We never need those objects again. Can we avoid creating them?
+
+Let's introduce perhaps the defining feature of the tidyverse: **the pipe**.
+
+## Combine multiple operations with the pipe
+
+Read the pipe as:
+
+Take this \|\> (*and then...*) <br>     do this \|\> (*and then...*) <br>     do this
+
+```{r}
+gapminder |> 
+  group_by(continent) |> 
+  summarise(avg_pop = mean(pop), avg_gdp_per_cap = mean(gdpPercap)) |> 
+  arrange(avg_gdp_per_cap)
+```
+
+## Combine multiple operations with the pipe
+
+```{r}
+gapminder |> 
+  group_by(continent) |> 
+  summarise(avg_pop = mean(pop), avg_gdp_per_cap = mean(gdpPercap)) |> 
+  ggplot(aes(x = continent, y = avg_gdp_per_cap)) + 
+  geom_col() + 
+  theme_minimal()
+```
+
+## A note on the pipe
+
+::::: columns
+::: {.column width="50%"}
+Base pipe:
+
+-   `|>`
+
+-   Can be used without loading any packages
+
+-   Relatively new: introduced in 2021
+:::
+
+::: {.column width="50%"}
+Tidyverse pipe:
+
+-   `%>%`
+
+-   Must load `dplyr` or `magrittr` to use
+:::
+:::::
+
+## Summary
+
+This session you have:
+
+1.  Learnt R basic syntax
+
+2.  Learnt how to transform your data
+
+3.  Written concise code that is easy to follow

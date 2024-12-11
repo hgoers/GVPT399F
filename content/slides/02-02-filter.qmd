@@ -1,0 +1,82 @@
+---
+title: "Filtering Your Data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+## `dplyr` basics
+
+-   First argument is always a data object (for example, a dataframe).
+
+-   Subsequent arguments typically describe which columns to operate on, using the variable names (without quotes).
+
+-   Output is always a new data object.
+
+## Filter rows with `filter()`
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+
+```
+
+```{r}
+filter(gapminder, country == "Australia", year > 2000)
+```
+
+## Filter rows with `filter()`
+
+```{r}
+filter(gapminder, continent %in% c("Asia", "Oceania"))
+```
+
+## Filter rows with `filter()`
+
+```{r}
+filter(gapminder, pop > 500000 & pop < 1000000)
+```
+
+## Filter rows with `filter()`
+
+```{r}
+filter(gapminder, pop > 500000 | pop < 1000000)
+```
+
+## Handy operations
+
+`==` is *equal to*
+
+<br>
+
+`!=` is *not equal to*
+
+<br>
+
+`>=` is *greater than or equal to*
+
+<br>
+
+`<=` is *less than or equal to*
+
+## Handy operations
+
+<br>
+
+`|` is *OR*
+
+<br>
+
+`&` is *AND*
+
+<br>
+
+`%in%` is *in*

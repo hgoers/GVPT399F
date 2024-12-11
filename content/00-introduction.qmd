@@ -11,37 +11,148 @@ execute:
   fig-width: 10
 ---
 
-Welcome to GVPT399F: Power, Politics, and Data! This course will introduce you to the skills you need to explore relationships within data and uncover answers to pressing political questions. 
+Welcome to GVPT399F: Power, Politics, and Data. This hands-on introduction to political science data analysis will (re)introduce you to R and statistics in an accessible and engaging way. We will avoid abstractions and jargon, opting instead for a hands-on, ground-up, and simulation-focused approach to understanding how these concepts and skills work. By the end of this winter, you’ll not only gain confidence in your ability to analyze and interpret data but also build in-demand skills valued in careers across government, international organizations, think tanks, and the private sector. No prior experience in statistics or coding (and definitely no ancient Greek) is needed—just bring your curiosity!
 
 ## What this course covers
 
+After successfully completing this course you will be able to:
+
+-   Use R to collect, clean, and analyze data
+
+-   Describe important features of your outcomes of interest and the variables you think drive changes to those outcomes
+
+-   Identify and evaluate the relationship between two variables using statistical models
+
+-   Describe those relationships using clear and precise language
+
+-   Critically evaluate empirical claims made in political news and analysis.
+
 ## Course structure
 
-The course comprises seven sessions (including this introductory session). You should complete these in order, from session zero to six. Each builds on the previous sessions.  
+The course comprises six substantive sessions, this introductory session, and a session to conclude. You should complete these in order: each builds on the previous sessions.
 
-Each session includes some written content, a series of short recorded lectures, and optional practice questions. Each ends with a mandatory multiple-choice quiz. You will be introduced to new R code and statistical concepts in each session. 
+Each session includes some written content and a series of short recorded lectures. Each ends with a mandatory multiple-choice quiz (taken through ELMs). You will be introduced to new R code and statistical concepts in each session.
 
-You will complete an exam at the end of session three and the final, sixth session. 
+Three substantive sessions will be released each week. You should complete them within that week. The quizzes for all three sessions released that week will be due at 11:59PM on Friday nights.
+
+You will also complete a final exam at the end of the course. All material covered in all eight sessions could be tested.
+
+### Quiz and exam schedule
+
++-------------+----------------------+-----------------+--------------------------+
+| WEEK        | ASSIGNMENT           | RELEASE DATE    | DUE DATE                 |
++=============+======================+=================+==========================+
+| 1           | 0: Introduction quiz | 2 January 2025  | 3 January 2025, 11:59PM  |
++-------------+----------------------+-----------------+--------------------------+
+| 2           | 1: X quiz            | 6 January 2025  | 10 January 2025, 11:59PM |
+|             |                      |                 |                          |
+|             | 2: X quiz            |                 |                          |
+|             |                      |                 |                          |
+|             | 3: X quiz            |                 |                          |
++-------------+----------------------+-----------------+--------------------------+
+| 3           | 4: X quiz            | 13 January 2025 | 17 January 2025, 11:59PM |
+|             |                      |                 |                          |
+|             | 5: X quiz            |                 |                          |
+|             |                      |                 |                          |
+|             | 6: X quiz            |                 |                          |
++-------------+----------------------+-----------------+--------------------------+
+| 4           | 7: Final exam        | 18 January 2025 | 22 January 2025, 11:59PM |
++-------------+----------------------+-----------------+--------------------------+
+
+Please note: weeks one and four are short.
 
 ## Course resources
 
-Each session includes several resources written just for you. These can all be accessed from this website. They include: 
+Each session includes several resources written just for you. These can all be accessed from this website. They include:
 
--   a series of videos
--   corresponding slides with embedded code.
+-   a series of recorded lectures
+-   corresponding slides with embedded R code
+-   some written content.
 
-You will need to head back over to ELMs to access the quizzes and exams.
+There are no additional required readings for this course. Along the way, I may suggest other resources - book chapters, blog posts, videos, etc. - that you might find helpful. Sometimes it helps to hear these concepts explained in a couple of different ways.
 
-## Additional required resources
+### Additional required resources
 
-To complete this course, you need access to a personal computer that is connected to the internet. You need to have R and RStudio downloaded on to that computer. Here are detailed instructions on how to download these two free resources:
+To complete this course, you need access to a personal computer and a stable internet connection. You also need to have access to the latest versions of R and RStudio. Here are detailed instructions on how to download or update these two free resources:
 
 {{< fa book >}} [Instructions on downloading R](https://r4ds.hadley.nz/intro#r)
 
 {{< fa book >}} [Instructions on downloading RStudio](https://r4ds.hadley.nz/intro#rstudio)
 
-There are no additional required readings for this course. Along the way, I may suggest other resources - specific book chapters, blog posts, videos, etc. - that you might find helpful. Sometimes it helps to hear some of these concepts explained in a couple of different ways. 
+Everything you need to successfully complete this course is available for free.
 
 ## Introduction to R and RStudio
 
-<iframe class="slide-deck" src="../content/slides/00-01-intro_to_r_rstudio.html" width = "100%" height = 600px></iframe>
+<iframe class="slide-deck" src="../content/slides/00-01-intro_to_r_rstudio.html" width="100%" height="600px">
+
+</iframe>
+
+I will now introduce you to two tools you will use to successfully complete this course: R and RStudio.
+
+R is a versatile programming language that excels in statistical analysis. It is widely used by academics and in the private, government, and international sectors. You will certainly get a lot of use out of it going forward!
+
+R is also a very flexible language. You can make all kinds of very cool things with R, including websites, apps, slides, and more. In fact, all the resources I produced for this course were made using R, including this website and fancy slides.
+
+Another advantage R has over other statistical programming languages is its accessibility. It is entirely free to use. There are many resources out there that will introduce you to its many uses. There is also an enthusiastic and welcoming community of R users who continue to grow R itself and the various resources you might need to expand your skills.
+
+### R and RStudio
+
+So, what is the difference between R and RStudio? R is the statistical programming language. RStudio is the platform, or **integrated development environment**, you will use to work with R. RStudio is free and used widely by R users.
+
+### The R skills you will learn
+
+This course aims to provide you with two broad skills: statistical analysis and R. I will now outline what you will learn in relation to R.
+
+You will learn how to **import** your data into R. You will learn how to load data stored in an external file, database, or online into a data frame in R.
+
+You will then be introduced to methods for cleaning up those data. Oftentimes, data comes to us in a messy format, with missingness, and inconsistencies. You will need to tidy it up into a format that is easy to work with and consistent.
+
+Once you have tidy data, you will then need to transform it so that it is ready for your analysis. This includes focusing your data on the observations you are interested in and creating new variables.
+
+Next, we will focus on visualizing your data. You can learn a lot more about your data and relationships lurking within it from a plot than you can from looking at the raw numbers.
+
+We will also spend a fair chunk of time learning how to model those relationships within our data. Alongside visualization, this is where R excels.
+
+Finally, I will also introduce you to tools for communicating your findings in an engaging and replicable way.
+
+### Exercises
+
+Using the console, find the summation of `45`, `978`, and `121`.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+sum(45, 978, 121)
+```
+
+Or:
+
+```{r}
+45 + 978 + 121
+```
+:::
+
+What is `67` divided by `6`?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+67 / 6
+```
+:::
+
+What is the square root of `894`? Hint: use the `sqrt()` function.
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+sqrt(894)
+```
+:::
+
+## Quiz
+
+Head over to ELMs to complete this session's mandatory multiple-choice quiz.

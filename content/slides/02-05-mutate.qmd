@@ -1,0 +1,37 @@
+---
+title: "Creating or changing columns of data"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+## Add new variables with `mutate()`
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+```
+
+```{r}
+mutate(gapminder, gdp = gdpPercap * pop)
+```
+
+## Change existing columns
+
+```{r}
+mutate(gapminder, gdpPercap = log(gdpPercap))
+```
+
+## Select, transform, and add new variables with `transmute()`
+
+```{r}
+transmute(gapminder, country, year, gdp = gdpPercap * pop)
+```

@@ -16,28 +16,33 @@ execute:
 #| echo: false
 
 library(tidyverse)
-library(ggthemes)
 ```
 
-## Data visualisation
+## Data visualization
 
-We will use data visualization to answer the following question: 
+We will use data visualization to answer the following question:
 
 > Do cars with big engines use more fuel than cars with small engines?
 
 ## EXERCISE {background-color="#B56576"}
 
-1. What do you think is the answer to this question? 
+1.  What do you think is the answer to this question?
 
 <br>
 
-2. How would you prove your answer? What information about cars would you need? 
+2.  How would you prove your answer? What information about cars would you need?
 
 ## R4DS
 
 This session will borrow (read: *steal*) heavily from Hadley Wickham's *R for Data Science* book.
 
-![Source: [R4DS](https://r4ds.had.co.nz/index.html)](img/cover.png){alt="Source: R4DS" fig-align="center"}
+![Source: R4DS](img/cover.png){fig-align="center"}
+
+## Data visualization: a critical skill
+
+-   You can learn an incredible amount about your data from plotting it
+
+-   Easier to digest the vast amount of information required to do data analysis from a plot than raw numbers
 
 ## Skipping to the end
 
@@ -59,8 +64,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
     subtitle = "Values for seven different classes of cars",
     x = "Engine displacement (L)",
     y = "Highway miles per gallon"
-  ) + 
-  scale_color_colorblind()
+  )
 ```
 
 ## How did we do this?
@@ -83,8 +87,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
     subtitle = "Values for seven different classes of cars",
     x = "Engine displacement (L)",
     y = "Highway miles per gallon"
-  ) + 
-  scale_color_colorblind()
+  )
 ```
 
 ::: aside

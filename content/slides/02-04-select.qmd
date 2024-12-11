@@ -1,0 +1,37 @@
+---
+title: "Selecting Relevant Columns"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+---
+
+## Select columns with `select()`
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gapminder)
+```
+
+```{r}
+select(gapminder, country, year, pop)
+```
+
+## Select columns with `select()`
+
+```{r}
+select(gapminder, country:pop)
+```
+
+## Select columns with `select()`
+
+```{r}
+select(gapminder, -(lifeExp:pop))
+```
