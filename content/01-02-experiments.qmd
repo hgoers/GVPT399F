@@ -43,10 +43,6 @@ set.seed(1234)
 
 We often want to better understand what factors lead to (or cause) certain outcomes of interest. This session explains how we might go about identifying these causal effects in the real-world.
 
-<iframe class="slide-deck" src="../content/slides/01-07-experiments.html" width="100%" height="600px">
-
-</iframe>
-
 Our goal as political scientists is to explain whether (and why) changes to some features lead to changes in our outcomes of interest. For example:
 
 -   Does increasing the number of voting booths close to a potential voter make that person more likely to vote?

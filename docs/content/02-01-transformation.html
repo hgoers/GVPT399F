@@ -330,8 +330,6 @@ Install packages
 <p>Before we get started, check out this video that describes (very enthusiastically) the relationship between health and wealth:</p>
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/jbkSRLYSojo" width="100%" height="600px" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </section><section id="introduction" class="level2"><h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<iframe class="slide-deck" src="../content/slides/02-01-transformation_intro.html" width="100%" height="600px">
-</iframe>
 <p>Today, I am going to introduce you to some of my most widely used functions in R. The <code>dplyr</code> R package, which houses these functions, focuses on providing you with some very helpful tools to tidy your data. This step in the data analysis process is critical, and often one of the most time consuming, so let’s get started!</p>
 <section id="r-objects" class="level3"><h3 class="anchored" data-anchor-id="r-objects">R objects</h3>
 <p>As a reminder, objects sit in R’s memory. You can see which ones exist in your current session and their values over in the environment tab.</p>
@@ -502,8 +500,6 @@ Check your answer
 </div>
 </div>
 </section></section><section id="filtering-your-data" class="level2"><h2 class="anchored" data-anchor-id="filtering-your-data">Filtering your data</h2>
-<iframe class="slide-deck" src="../content/slides/02-02-filter.html" width="100%" height="600px">
-</iframe>
 <p>We are going to start by learning how to filter our data to only include those observations we are interested in exploring.</p>
 <p>All <code>dplyr</code> functions are structured the same way. They take the data object you want to transform as their first argument. You then need to identify the columns within that data object you want to transform and what you want to do with them.</p>
 <p>For example, the following code takes our data set, <code>gapminder</code>, and tells <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> that we want to only include rows in which the <code>country</code> column matches “Australia” and the <code>year</code> column is greater than 2000:</p>
@@ -763,8 +759,6 @@ Check your answer
 </div>
 </div>
 </section></section><section id="sorting-your-data" class="level2"><h2 class="anchored" data-anchor-id="sorting-your-data">Sorting your data</h2>
-<iframe class="slide-deck" src="../content/slides/02-03-arrange.html" width="100%" height="600px">
-</iframe>
 <p>We can control the order of our data using <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code>. The following code sorts our data by country name (alphabetically) and year (in ascending numerical order):</p>
 <div class="cell">
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">gapminder</span>, <span class="va">country</span>, <span class="va">year</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -899,8 +893,6 @@ Check your answer
 </div>
 </div>
 </section></section><section id="selecting-relevant-columns" class="level2"><h2 class="anchored" data-anchor-id="selecting-relevant-columns">Selecting relevant columns</h2>
-<iframe class="slide-deck" src="../content/slides/02-04-select.html" width="100%" height="600px">
-</iframe>
 <p>You can focus your data set on only those variables you are interested in using <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>. The following code selects only the <code>country</code>, <code>year</code>, and <code>pop</code> variables from our larger <code>gapminder</code> data set:</p>
 <div class="cell">
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">gapminder</span>, <span class="va">country</span>, <span class="va">year</span>, <span class="va">pop</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1074,8 +1066,6 @@ Check your answer
 </div>
 </div>
 </section></section><section id="create-or-change-columns-of-data" class="level2"><h2 class="anchored" data-anchor-id="create-or-change-columns-of-data">Create or change columns of data</h2>
-<iframe class="slide-deck" src="../content/slides/02-05-mutate.html" width="100%" height="600px">
-</iframe>
 <p>Oftentimes, we need to create new columns from existing ones or change in a consistent way existing columns of data. You can use <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> to do this. For example, the following code creates a new column, <code>gdp</code>, which is the product of <code>gdpPercap</code> and <code>pop</code>:</p>
 <div class="cell">
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span><span class="va">gapminder</span>, gdp <span class="op">=</span> <span class="va">gdpPercap</span> <span class="op">*</span> <span class="va">pop</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1208,8 +1198,6 @@ Check your answer
 </div>
 </div>
 </section></section><section id="summarize-your-data" class="level2"><h2 class="anchored" data-anchor-id="summarize-your-data">Summarize your data</h2>
-<iframe class="slide-deck" src="../content/slides/02-06-summarise.html" width="100%" height="600px">
-</iframe>
 <p>Finally, you can summarize (or aggregate) your data. For example, we often want to find the average of our observations. The following code finds the average population and GDP per capita for all country-years in our data set:</p>
 <div class="cell">
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span></span>
@@ -1407,8 +1395,6 @@ Check your answer
 </div>
 </div>
 </section></section><section id="the-pipe" class="level2"><h2 class="anchored" data-anchor-id="the-pipe">The pipe</h2>
-<iframe class="slide-deck" src="../content/slides/02-07-pipe.html" width="100%" height="600px">
-</iframe>
 <p>That got messy! We had a lot of different objects representing intermediate steps in our calculations, but we never need those objects again. Can we avoid creating them?</p>
 <p>Let’s introduce perhaps the defining feature of the tidyverse: <strong>the pipe</strong>.</p>
 <p>Read the pipe (<code>|&gt;</code>) as:</p>

@@ -45,10 +45,6 @@ library(dataverse)
 
 ## Introduction
 
-<iframe class="slide-deck" src="../content/slides/02-09-surveys.html" width="100%" height="600px">
-
-</iframe>
-
 Entire populations are very difficult to collect data on. Even the census (which aims to account for every citizen living within a country) misses people. Happily, we do not need to learn information about the whole population to discover general trends within it. Instead, we can use good surveys of the population.
 
 What do I mean by "good"? The sample of your population surveyed must be **representative** of that population. This session focuses on defining what we mean by that.

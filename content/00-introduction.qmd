@@ -83,23 +83,7 @@ Everything you need to successfully complete this course is available for free.
 
 ## Introduction to R and RStudio
 
-::: panel-tabset
-## Video
-
-<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=86d7d676-961d-4379-be9c-b24300bb7137&amp;autoplay=false&amp;offerviewer=true&amp;showtitle=true&amp;showbrand=true&amp;captions=false&amp;start=0&amp;interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Introduction to R and RStudio">
-
-</iframe>
-
-## Slides
-
-<iframe class="slide-deck" src="../content/slides/00-01-intro_to_r_rstudio.html" width="100%" height="600px">
-
-</iframe>
-:::
-
-I will now introduce you to two tools you will use to successfully complete this course: R and RStudio.
-
-R is a versatile programming language that excels in statistical analysis. It is widely used by academics and in the private, government, and international sectors. You will certainly get a lot of use out of it going forward!
+I will now introduce you to two tools you will use to successfully complete this course: R and RStudio. R is a versatile programming language that excels in statistical analysis. It is widely used by academics and in the private, government, and international sectors. You will certainly get a lot of use out of it going forward!
 
 R is also a very flexible language. You can make all kinds of very cool things with R, including websites, apps, slides, and more. In fact, all the resources I produced for this course were made using R, including this website and fancy slides.
 
