@@ -94,12 +94,6 @@ library(tidyverse)
 
     -   Even if you did answer, how likely were you to answer all their questions?
 
-## Large numbers
-
--   Randomization isn't enough: we also need to draw a sufficiently large sample from our population
-
-    -   One person pulled randomly from the class isn't going to be very reflective of the class!
-
 ## To illustrate
 
 Countries' GDP in 2022:
@@ -162,3 +156,9 @@ Poorer countries are far less likely to be able or willing to provide these econ
 My sample was biased against poorer countries.
 
 -   They were not equally likely to respond to my request for data as rich countries
+
+## Large numbers
+
+-   Randomization isn't enough: we also need to draw a sufficiently large sample from our population
+
+    -   One person pulled randomly from the class isn't going to be very reflective of the class!

@@ -42,7 +42,7 @@ You will also complete a final exam at the end of the course. All material cover
 +--------------+----------------------+-----------------+--------------------------+
 | WEEK         | ASSIGNMENT           | RELEASE DATE    | DUE DATE                 |
 +==============+======================+=================+==========================+
-| 1            | 0: Introduction quiz | 2 January 2025  | 3 January 2025, 11:59PM  |
+| 1            | 0: Introduction quiz | 2 January 2025  | 10 January 2025, 11:59PM |
 +--------------+----------------------+-----------------+--------------------------+
 | 2            | 1: Session 1 quiz    | 6 January 2025  | 10 January 2025, 11:59PM |
 |              |                      |                 |                          |

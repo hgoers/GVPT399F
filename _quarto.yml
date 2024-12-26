@@ -33,10 +33,11 @@ website:
         - section: "Session 2"
           contents: 
             - content/02-01-transformation.qmd
-#            - content/02-02-surveys_to_pops.qmd
-        - section: "Additional resources"
+            - content/02-02-surveys_to_pops.qmd
+        - section: "Session 3"
           contents: 
-            - resources/quarto.qmd
+            - content/03-01-wrangling.qmd
+            - content/03-02-bivariate.qmd
         
   page-footer:
     left: |

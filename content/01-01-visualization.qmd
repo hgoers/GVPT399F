@@ -11,9 +11,23 @@ execute:
   fig-width: 10
 ---
 
-```{r}
-#| echo: false
+## Set up
 
+To complete this session, you need to load in the following R packages:
+
+::: {.callout-tip collapse="true"}
+## Install packages
+
+To install new R packages, run the following (excluding the packages you have already installed):
+
+```{r}
+#| eval: false
+
+install.packages("tidyverse")
+```
+:::
+
+```{r}
 library(tidyverse)
 ```
 

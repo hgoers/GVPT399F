@@ -12,12 +12,31 @@ execute:
 bibliography: references.bib
 ---
 
+## Set up
+
+To complete this session, you need to load in the following R packages:
+
+::: {.callout-tip collapse="true"}
+## Install packages
+
+To install new R packages, run the following (excluding the packages you have already installed):
+
 ```{r}
-#| echo: false
+#| eval: false
+
+install.packages(c("tidyverse", "DT", "patchwork"))
+```
+:::
+
+```{r}
 
 library(tidyverse)
 library(DT)
 library(patchwork)
+```
+
+```{r}
+#| echo: false
 
 set.seed(1234)
 ```

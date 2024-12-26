@@ -1,0 +1,288 @@
+---
+title: "Data Wrangling"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+---
+
+## Set up
+
+To complete this session, you need to load in the following R packages:
+
+::: {.callout-tip collapse="true"}
+## Install packages
+
+To install new R packages, run the following (excluding the packages you have already installed):
+
+```{r}
+#| eval: false
+
+install.packages(c("tidyverse", "janitor", "scales", "wbstats"))
+```
+:::
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(scales)
+library(wbstats)
+```
+
+## Introduction
+
+I am now going to introduce you to a set of important tools for tidying your data. Oftentimes, the data we want to work with does not come to us in a format that is easy for us to use. We need to wrangle it into a better structure and remove inconsistencies.
+
+We will continue to work with the variables the Gapminder Project is interested in: health and wealth. However, instead of accessing the lovely clean data set provided to you in the `gapminder` R package, we are going to go straight to the source and collect data on countries' GDP per capita and average life expectancy from the World Bank. Let's get started!
+
+## Lengthening messy data
+
+The World Bank provides us with access to a trove of official country- and sub-national level data that are very useful for political analysis. I use their data in nearly all of my research. Sadly, they tend to provide their data in a messy format. We will now collect that messy data so we can learn how to tidy it up.
+
+To access their data and some wonderful data visualizations, you can head over to their data portal: <https://data.worldbank.org/>. From there, you can browse which data sets they have or search for ones you are interested in.
+
+We are going to start by collecting data on countries' GDP per capita (current US\$). It can be accessed here: <https://data.worldbank.org/indicator/NY.GDP.PCAP.CD>. You can download the data directly from this web page, save it in the appropriate place in your RProject, and read it in from there.
+
+::: callout-note
+This process is similar to the one we used in Session 2: From Samples to the Population.
+:::
+
+I saved the CSV in the `data` folder (which is the in the `content` folder because this is a website), so I will use `here::here()` to adaptively find the correct file path and read the file in using `read_csv()`.
+
+```{r}
+
+gdp_per_cap_raw <- read_csv(here::here("content", "data", 
+                                       "API_NY.GDP.PCAP.CD_DS2_en_csv_v2_76.csv"))
+```
+
+After running this yourself, you will see an ominous warning. Let's take a look at our data:
+
+```{r}
+
+gdp_per_cap_raw
+```
+
+We have only three columns, none of which appear to have the right names. It also looks like the first few rows may, in fact, not be rows in our data set. Rather, they are metadata, including the last time the data were updated.
+
+The second row in our data set looks like the real column headings. This is good! We can skip the first few rows using `read_csv()`'s `skip` argument. Just provide it with the number of rows you want to skip when reading in the CSV.
+
+```{r}
+gdp_per_cap_raw <- read_csv(here::here("content", "data", 
+                                       "API_NY.GDP.PCAP.CD_DS2_en_csv_v2_76.csv"),
+                            skip = 3)
+
+gdp_per_cap_raw
+```
+
+That looks better! We have now read in the data set itself, skipping those rows of metadata.
+
+The resulting data set is a wide one. Each observation is a country or region. The first two columns provide information on the country. The third and fourth describe the indicator. All other columns provide each country's GDP per capita in all years from 1960 to 2023.
+
+Now, imagine you want to compare a country's GDP per capita across many years. For example, you want to know how Australians' wealth has grown over time. This is very difficult to do with this current format. We would need to work with all columns from 1960 to 2023!
+
+To make these data easier to work with, we will lengthen the data set. Instead of each observation (row) describing a country, we will make each observation describe a country-year.
+
+To do this, we need to use `pivot_longer()`. We need to let it know which columns we want to transpose using the `col` argument. Because the end year for these data will change each year I want to pull and clean up this data set (for example, next year the last column will be 2024, not 2023), I will use `!` to negate the columns I don't want to transpose. This code will, therefore, work after each annual update to the data set.
+
+```{r}
+gdp_per_cap <- gdp_per_cap_raw |> 
+  pivot_longer(cols = !c(`Country Name`:`Indicator Code`),
+               names_to = "year",
+               values_to = "gdp_per_cap")
+
+gdp_per_cap
+```
+
+I have also told `pivot_longer()` what to call the column containing the previous column names (using `names_to`) and the column containing the values (using `values_to`).
+
+You might have noticed that I needed to include some back ticks when referencing those column names. This is because these column names do not follow the rules put in place to help you work with R. Column names must:
+
+-   Not include spaces
+
+-   Not start with numbers or special characters
+
+They should also be:
+
+-   Short
+
+-   Meaningful
+
+-   Consistently formatted
+
+The World Bank uses spaces in its column names. We need to remove those so we can more easily work with them in R. Happily, the very handy `janitor` R package is here for all of your cleaning needs!
+
+I use the `clean_names()` function to ensure names are clean and consistent:
+
+```{r}
+gdp_per_cap <- clean_names(gdp_per_cap)
+gdp_per_cap
+```
+
+Great! We're almost there. Next, we need to check that R has correctly classified our data types. For example, we want to make sure that the years are coded as numbers not strings of characters.
+
+```{r}
+glimpse(gdp_per_cap)
+```
+
+Hmm, it does appear to have read the years in as characters. Why?
+
+```{r}
+unique(gdp_per_cap$year)
+```
+
+Looking at all unique values included in the `year` column, we can see the culprit: `"...69"`. It looks like the CSV includes a rouge last column with no data in it. `read_csv()` read that column in and coded all its values as `NA`:
+
+```{r}
+gdp_per_cap |> 
+  filter(year == "...69") |> 
+  distinct(gdp_per_cap)
+```
+
+We can simply filter this out of our data set to get rid of it and convert the remaining values to numbers using `mutate()`:
+
+```{r}
+gdp_per_cap <- gdp_per_cap |> 
+  filter(year != "...69") |> 
+  mutate(year = as.numeric(year))
+gdp_per_cap
+```
+
+We now have a nice and clean data set that is easy to work with. Let's take a look at Australia's growth over time:
+
+```{r}
+gdp_per_cap |> 
+  filter(country_name == "Australia") |> 
+  ggplot(aes(x = year, y = gdp_per_cap)) + 
+  geom_line() + 
+  geom_point(size = 1) + 
+  theme_minimal() + 
+  labs(x = "Year",
+       y = "GDP per capita (current US$)") + 
+  scale_y_continuous(labels = dollar)
+```
+
+## Widening messy data
+
+Sometimes you want to widen your data. `tidyr` provides a similar function, `pivot_wider()`, to do just this. Let's start by getting some long data. We will again collect these data from the World Bank, but this time we will use `wbstats` to access it directly through the API.
+
+We will add to our data set information on each country's average life expectancy (ID: SP.DYN.LE00.IN).
+
+```{r}
+gapminder_raw <- wb_data(
+  indicator = c("SP.DYN.LE00.IN", "NY.GDP.PCAP.CD"),
+  return_wide = F
+)
+
+gapminder_raw
+```
+
+::: callout-note
+By default, the wonderful `wb_data()` function will return data to you in a clean (and wide) format. Therefore, to illustrate how to wrangle these data, I need to include the `return_wide = F` argument.
+:::
+
+We now have data on each country-year-indicator. For example, let's look at what we have for Afghanistan in 2018:
+
+```{r}
+gapminder_raw |> 
+  filter(country == "Afghanistan", date == 2018)
+```
+
+This is difficult to work with. For example, think about how you would plot each country's GDP per capita against its average life expectancy for a single year.
+
+We need to make these data wider. We want our observations to be country-year. We will therefore have a column for each country-year's GDP per capita and its average life expectancy.
+
+`pivot_wider()` works by creating a new column for each unique value in the column you tell it to draws names from (using the `names_from` argument). It will then populate that column with the corresponding value from the column you tell it to draw values from (using the `values_from` argument). It preserves all unique values in the other rows.
+
+This is a little easier to understand in practice. Let's step through widening our Gapminder data. I'll start by diving straight in:
+
+```{r}
+pivot_wider(gapminder_raw, names_from = indicator_id, values_from = value)
+```
+
+We now have two new columns: `SP.DYN.LE00.IN` for average life expectancy, and `NY.GDP.PCAP.CD` for GDP per capita. These columns contain the corresponding values for each country-year's average life expectancy and GDP per capita.
+
+However, something has gone wrong. Our wider data set should have fewer rows than our longer one. This is because we are hoping to have one row for each country-year containing information on its average life expectancy and GDP per capita for each year, rather than two rows for each country-year (one for each indicator). Why is this happening?
+
+Well, the World Bank data set includes unique information about each indicator in the `indicator` column. Because this is country-year-indicator level information, `pivot_wider()` - in an attempt to preserve that information - creates a country-year-indicator level data set. To tidy and widen our data set, we need to remove all country-year-indicator level information *and then* pivot it.
+
+```{r}
+gapminder <- gapminder_raw |>
+  select(!indicator) |> 
+  pivot_wider(names_from = indicator_id, values_from = value)
+gapminder
+```
+
+Much better! We now have a data set at the country-year level. Each country-year has information on its average life expectancy and GDP per capita.
+
+Those variable names are hard to work with and not very meaningful, so we need to clean them up:
+
+```{r}
+gapminder <- rename(gapminder, avg_life_exp = SP.DYN.LE00.IN, gdp_per_cap = NY.GDP.PCAP.CD)
+gapminder
+```
+
+There is also a fair bit of information in this data set that I do not need, so I will remove it and reorder the columns so they are easier to view:
+
+```{r}
+gapminder <- select(gapminder, country, iso3c, date, avg_life_exp, gdp_per_cap)
+gapminder
+```
+
+We now have a nice, clean, and wide data set. You can easily look at the relationship between your two variables of interest over time:
+
+```{r}
+gapminder |> 
+  filter(date %in% 2017:2022) |> 
+  ggplot(aes(x = log(gdp_per_cap), y = avg_life_exp)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = F) + 
+  facet_wrap(~ date) + 
+  theme_minimal() + 
+  labs(x = "GDP per capita (logged current US$)",
+       y = "Average life expectancy")
+```
+
+::: callout-tip
+`facet_wrap()` creates a unique plot for each value in the column you specify. Here, I have used it to create six plots for each of the six years from 2017 to 2022.
+:::
+
+## Exercises
+
+Name three different types of cases you can use through `janitor::clean_names()` to format your column names.
+
+::: callout-tip
+## HINT
+
+Read the argument descriptions in the `clean_names()` function documentation (by running `?clean_names` in your console.
+:::
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+Here is the full list:
+
+```         
+c("snake", "small_camel", "big_camel",
+  "screaming_snake", "parsed", "mixed", "lower_upper", "upper_lower",
+  "swap", "all_caps", "lower_camel", "upper_camel", "internal_parsing",
+  "none", "flip", "sentence", "random", "title")
+```
+
+I like the default (snake case), but other common ones include big camel and all caps.
+:::
+
+How would you lengthen the `gapminder` data set we created earlier?
+
+::: {.callout-note collapse="true"}
+## Check your answer
+
+```{r}
+gapminder |> 
+  pivot_longer(cols = avg_life_exp:gdp_per_cap, names_to = "indicator")
+```
+:::

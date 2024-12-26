@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Estimating Causal Effects with Observational Data – GVPT399F</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="..//files/img/hex-testudo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="../html/custom.css">
+</head>
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">GVPT399F</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../content/00-introduction.html"> 
+<span class="menu-text">Content</span></a>
+  </li>  
+</ul>
+</div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#set-up" id="toc-set-up" class="nav-link active" data-scroll-target="#set-up">Set up</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-economic-benefits-of-justice" id="toc-the-economic-benefits-of-justice" class="nav-link" data-scroll-target="#the-economic-benefits-of-justice">The economic benefits of justice</a></li>
+  <li><a href="#net-fdi-inflows-to-post-conflict-states" id="toc-net-fdi-inflows-to-post-conflict-states" class="nav-link" data-scroll-target="#net-fdi-inflows-to-post-conflict-states">Net FDI inflows to post-conflict states</a></li>
+  <li><a href="#pcj-institutions" id="toc-pcj-institutions" class="nav-link" data-scroll-target="#pcj-institutions">PCJ institutions</a></li>
+  <li>
+<a href="#relationship-between-pcj-institutions-and-net-fdi-inflows" id="toc-relationship-between-pcj-institutions-and-net-fdi-inflows" class="nav-link" data-scroll-target="#relationship-between-pcj-institutions-and-net-fdi-inflows">Relationship between PCJ institutions and net FDI inflows</a>
+  <ul>
+<li><a href="#substantive-significance" id="toc-substantive-significance" class="nav-link" data-scroll-target="#substantive-significance">Substantive significance</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#but-what-about-other-factors-that-shape-net-fdi-inflows" id="toc-but-what-about-other-factors-that-shape-net-fdi-inflows" class="nav-link" data-scroll-target="#but-what-about-other-factors-that-shape-net-fdi-inflows">But what about other factors that shape net FDI inflows?</a>
+  <ul>
+<li><a href="#using-this-richer-model" id="toc-using-this-richer-model" class="nav-link" data-scroll-target="#using-this-richer-model">Using this richer model</a></li>
+  <li><a href="#the-full-model" id="toc-the-full-model" class="nav-link" data-scroll-target="#the-full-model">The full model</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#including-categorical-variables-with-multiple-categories" id="toc-including-categorical-variables-with-multiple-categories" class="nav-link" data-scroll-target="#including-categorical-variables-with-multiple-categories">Including categorical variables with multiple categories</a>
+  <ul>
+<li><a href="#predictions-with-multiple-categorical-variables" id="toc-predictions-with-multiple-categorical-variables" class="nav-link" data-scroll-target="#predictions-with-multiple-categorical-variables">Predictions with multiple categorical variables</a></li>
+  </ul>
+</li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/hgoers/GVPT339F/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">Estimating Causal Effects with Observational Data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><p>Generally, we - political scientists - want to understand what factors shape important political outcomes. We can use empirical research to help build and bolster this understanding. Many of the questions we ask cannot be answered using experiments. We are left, instead, to look back at the history of our outcome of interest (for example, global conflicts, democratic backsliding, elections), and attempt to tease out the role various factors played in shaping those outcomes. This section focuses on developing your ability to do this.</p>
+<section id="set-up" class="level2"><h2 class="anchored" data-anchor-id="set-up">Set up</h2>
+<p>To complete this session, you need to load in the following R packages:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Install packages
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To install new R packages, run the following (excluding the packages you have already installed):</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"marginaleffects"</span>, <span class="st">"janitor"</span>, <span class="st">"ggdist"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://modelsummary.com">modelsummary</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://marginaleffects.com/">marginaleffects</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mjskay.github.io/ggdist/">ggdist</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://hgoers.github.io/polisciols/">polisciols</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="introduction" class="level2"><h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Specifically, this section develops your ability to estimate average treatment effects using observational data.</p>
+</section><section id="the-economic-benefits-of-justice" class="level2"><h2 class="anchored" data-anchor-id="the-economic-benefits-of-justice">The economic benefits of justice</h2>
+<p><span class="citation" data-cites="appel2012">Appel and Loyle (<a href="#ref-appel2012" role="doc-biblioref">2012</a>)</span> (two wonderful UMD alumni) explore the determinants of foreign direct investment (FDI) flows into and out of post-conflict states. States that are emerging from civil war often have an acute need for foreign and stable sources of capital. However, multinational corporations and other foreign commercial actors are likely to view post-conflict states as high risk countries in which to invest: the risk of a return to violence and instability is often high in the immediate aftermath of a civil war. Understanding this, leaders of post-conflict states often attempt to decrease this perceived risk.</p>
+<p>Appel and Loyle argue that leaders can successfully do this by establishing post-conflict justice (PCJ) institutions. These institutions impose both domestic and reputational costs on post-conflict leaders. These costs allow leaders to signal their commitment to minimizing the risk of a return to violence and instability to foreign commercial actors. This is a great paper and I highly encourage you to take a look at <a href="https://journals.sagepub.com/doi/10.1177/0022343312450044">their argument</a> in detail.</p>
+<p>Their argument focuses on leaders’ attempts to change foreign commercial actors’ perceptions of the risk of a return to violence. We cannot directly observe these commercial actors’ perceptions. However, we can observe the outcome of these perceptions: investment. If Appel and Loyle’s argument is correct, we should observe higher levels of FDI investment coming into post-conflict states that establish PCJ institutions compared to those that do not, on average and holding all else constant.</p>
+<p>Appel and Loyle find strong evidence of this. We will replicate and modify this empirical work. In doing so, we will become more familiar with the underlying mechanics of multiple linear regression and strengthen our ability to interpret these models.</p>
+<p>Let’s get started!</p>
+</section><section id="net-fdi-inflows-to-post-conflict-states" class="level2"><h2 class="anchored" data-anchor-id="net-fdi-inflows-to-post-conflict-states">Net FDI inflows to post-conflict states</h2>
+<p>Appel and Loyle provide us with data on 95 different post-conflict states. These include all states that had internal armed conflicts, including internationalized conflicts, that resulted in at least 25 battle-related deaths and were settled between 1970 and 2001.</p>
+<p>We can access these data through <code><a href="https://rdrr.io/pkg/polisciols/man/ebj.html">polisciols::ebj</a></code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ebj</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   id ccode      country_name              pcj net_fdi_inflows gdp_per_capita
+1  71    41             Haiti  No institutions         -9.8000       1182.498
+2  71    41             Haiti  No institutions          6.6000       1088.680
+3 154    52 Trinidad &amp; Tobago  No institutions        510.1589       7742.736
+4 102    70            Mexico  No institutions       -340.6904       6894.704
+5 102    70            Mexico  No institutions       6460.7998       7780.053
+6  67    90         Guatemala PCJ institutions        431.3800       3061.873
+           gdp gdp_per_capita_growth ex_rate_fluc cap_account_openness labor
+1   8407079981            -2.1324685     0.000000           -0.7681904  68.5
+2   8055393763           -14.8832922     1.776603           -0.0871520  67.9
+3   9542938026             1.9370972     0.000000           -1.1305820  55.2
+4 628418000000            -7.8634830     1.978028            1.1804080  59.8
+5 730752000000             5.2345648     1.129686            1.1804080  61.3
+6  31339424077             0.6277104     1.046489            1.2642760  63.1
+  f_life_exp polity2 pol_constraints conflict_duration     damage
+1   55.02233       7            0.00                 1   0.000000
+2   56.09750      -7            0.00                 1  12.855902
+3   72.61483       9            0.84                 1  -2.787351
+4   74.67104       4            0.39                 1   0.000000
+5   75.23493       6            0.39                 1  -8.949999
+6   67.46067       8            0.43                31 -43.714600
+  peace_agreement    victory      cold_war
+1    No agreement    Victory Post-Cold War
+2    No agreement    Victory Post-Cold War
+3    No agreement    Victory Post-Cold War
+4 Peace agreement No victory Post-Cold War
+5    No agreement No victory Post-Cold War
+6 Peace agreement No victory Post-Cold War</code></pre>
+</div>
+</div>
+<p>They focus on the 10-year period immediately following the conflict’s conclusion. This is the period in which we would expect foreign commercial actors to perceive the risk of a return to violence and instability to be greatest and, therefore, the period in which leaders’ attempts to quash these perceptions to be most relevant.</p>
+<p>Therefore, each row in this data set represents a single post-conflict state. The data is generally a summary of the 10-years post-conflict. For example <code>net_fdi_inflows</code> provides us with the total net FDI inflows each post-conflict state received in that 10-year period.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can learn more about each variable using the following command:</p>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">?</span><span class="va">ebj</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>Their outcome of interest is net FDI inflows. Remember, if their argument is correct we would expect post-conflict states that have established a PCJ institution to have higher net FDI inflows than than states that did not. Let’s take a look at those net inflows:</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ebj</span><span class="op">$</span><span class="va">net_fdi_inflows</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+-1858.914    -0.572    38.290   759.146   408.250 24836.787 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">ebj</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">net_fdi_inflows</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/dollar_format.html">dollar</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="04-02-linear_regression_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There appears to be a clear outlier: a net FDI inflow of $24,836.79 million for Russia. You can see that this is pulling up the average net FDI inflows well above the median inflow across our group of post-conflict states. We will keep this in because this is not the focus of this session, but I would encourage you to explore whether these findings are sensitive to its inclusion.</p>
+<p>We learn from this that some states have greater FDI outflows than inflows (resulting in negative net FDI inflows). Indonesia had the greatest negative inflow, with net inflows of -$1,858.91 million.</p>
+<p>Other states received greater foreign investments than they invested elsewhere, resulting in positive net FDI inflows. In fact, on average, post-conflict states received more inflows than outflows.</p>
+</section><section id="pcj-institutions" class="level2"><h2 class="anchored" data-anchor-id="pcj-institutions">PCJ institutions</h2>
+<p>Appel and Loyle focus on whether states that have PCJ institutions successfully attract greater net FDI inflows than those that do not. Therefore, their main explanatory variable is the existance of PCJ institutions.</p>
+<p>This variable, <code>pcj</code>, indicates whether the the state established a PCJ institution within five years following the end of the conflict. What proportion of states did this?</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://sfirke.github.io/janitor/reference/tabyl.html">tabyl</a></span><span class="op">(</span><span class="va">ebj</span>, <span class="va">pcj</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              pcj  n   percent
+  No institutions 77 0.8105263
+ PCJ institutions 18 0.1894737</code></pre>
+</div>
+</div>
+<p>The majority of post-conflict states did not have PCJ institutions.</p>
+</section><section id="relationship-between-pcj-institutions-and-net-fdi-inflows" class="level2"><h2 class="anchored" data-anchor-id="relationship-between-pcj-institutions-and-net-fdi-inflows">Relationship between PCJ institutions and net FDI inflows</h2>
+<p>Of the states that do have a PCJ institution, do they tend to receive higher net FDI inflows than their less reconciliatory counterparts?</p>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ebj</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">pcj</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>avg_net_fdi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">net_fdi_inflows</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  pcj              avg_net_fdi
+  &lt;fct&gt;                  &lt;dbl&gt;
+1 No institutions         425.
+2 PCJ institutions       2189.</code></pre>
+</div>
+</div>
+<p>Yes! States that established a PCJ institution received higher net FDI inflows, on average, than those states that did not. This difference looks large! It’s $1,763.52 million in net inflows!</p>
+<p>But what are the chances this difference is simply the product of chance? We can formally test this question using linear regression:</p>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">net_fdi_inflows</span> <span class="op">~</span> <span class="va">pcj</span>, data <span class="op">=</span> <span class="va">ebj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://modelsummary.com/man/modelsummary.html">modelsummary</a></span><span class="op">(</span><span class="va">m</span>, </span>
+<span>             coef_rename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pcjPCJ institutions"</span> <span class="op">=</span> <span class="st">"PCJ institutions established"</span><span class="op">)</span>,</span>
+<span>             stars <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_lyf2l9lo2ipm5j6v5qb7(i, j, css_id) {
+          var table = document.getElementById("tinytable_lyf2l9lo2ipm5j6v5qb7");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_lyf2l9lo2ipm5j6v5qb7');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_lyf2l9lo2ipm5j6v5qb7(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_lyf2l9lo2ipm5j6v5qb7");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 0 }, { i: 6, j: 0 }, { i: 7, j: 0 }, { i: 9, j: 0 }, { i: 10, j: 0 },  ], css_id: 'tinytable_css_ypzk58ilsf1nt5tieldm',}, 
+          { positions: [ { i: 11, j: 0 },  ], css_id: 'tinytable_css_vgoy1t9lyof8jbg2lhti',}, 
+          { positions: [ { i: 11, j: 1 },  ], css_id: 'tinytable_css_o114m8qeljxanb4ueuzm',}, 
+          { positions: [ { i: 4, j: 1 },  ], css_id: 'tinytable_css_lcqhmu1nodavrwwvek9x',}, 
+          { positions: [ { i: 4, j: 0 },  ], css_id: 'tinytable_css_ii68ypflmrxky27i3ji6',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_hmu5673egnyhaw77lbjw',}, 
+          { positions: [ { i: 1, j: 1 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 1 }, { i: 6, j: 1 }, { i: 7, j: 1 }, { i: 9, j: 1 }, { i: 10, j: 1 },  ], css_id: 'tinytable_css_52zzayws0tri9kcbsuw9',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_0zri8tgl5kkvcg151faz',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_lyf2l9lo2ipm5j6v5qb7(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script><style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_ypzk58ilsf1nt5tieldm, .table th.tinytable_css_ypzk58ilsf1nt5tieldm { text-align: left; }
+      .table td.tinytable_css_vgoy1t9lyof8jbg2lhti, .table th.tinytable_css_vgoy1t9lyof8jbg2lhti { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_o114m8qeljxanb4ueuzm, .table th.tinytable_css_o114m8qeljxanb4ueuzm { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_lcqhmu1nodavrwwvek9x, .table th.tinytable_css_lcqhmu1nodavrwwvek9x { text-align: center; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_ii68ypflmrxky27i3ji6, .table th.tinytable_css_ii68ypflmrxky27i3ji6 { text-align: left; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_hmu5673egnyhaw77lbjw, .table th.tinytable_css_hmu5673egnyhaw77lbjw { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_52zzayws0tri9kcbsuw9, .table th.tinytable_css_52zzayws0tri9kcbsuw9 { text-align: center; }
+      .table td.tinytable_css_0zri8tgl5kkvcg151faz, .table th.tinytable_css_0zri8tgl5kkvcg151faz { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </style>
+<div class="container">
+      <table class="table table-borderless" id="tinytable_lyf2l9lo2ipm5j6v5qb7" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col"> </th>
+                <th scope="col">(1)</th>
+              </tr></thead>
+<tfoot><tr><td colspan="2">+ p </td></tr></tfoot>
+<tbody>
+<tr>
+<td>(Intercept)                 </td>
+                  <td>425.006  </td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(323.874)</td>
+                </tr>
+<tr>
+<td>PCJ institutions established</td>
+                  <td>1763.517*</td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(744.049)</td>
+                </tr>
+<tr>
+<td>Num.Obs.                    </td>
+                  <td>95       </td>
+                </tr>
+<tr>
+<td>R2                          </td>
+                  <td>0.057    </td>
+                </tr>
+<tr>
+<td>R2 Adj.                     </td>
+                  <td>0.047    </td>
+                </tr>
+<tr>
+<td>AIC                         </td>
+                  <td>1784.5   </td>
+                </tr>
+<tr>
+<td>BIC                         </td>
+                  <td>1792.2   </td>
+                </tr>
+<tr>
+<td>Log.Lik.                    </td>
+                  <td>-889.253 </td>
+                </tr>
+<tr>
+<td>RMSE                        </td>
+                  <td>2811.91  </td>
+                </tr>
+</tbody>
+</table>
+</div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+<p>According to this model, what is the average predicted net FDI inflows for countries that did not establish PCJ institution?</p>
+<div class="callout callout-style-default callout-caution callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Post-conflict states that did not establish a PCJ institution received, on average, net FDI inflows of $425.01 million in the 10-year period after conflict.</p>
+<p>To get this, I looked at the <strong>intercept coefficient</strong> which tells us the average predicted value of our outcome variable when all explanatory variables are equal to zero or their baseline category.</p>
+</div>
+</div>
+</div>
+<p>According to this model, what is the average predicted net FDI inflows for countries that <em>did</em> establish PCJ institution?</p>
+<div class="callout callout-style-default callout-caution callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In contrast, states that <em>did</em> establish PCJ institution received, on average, net FDI inflows of $2,188.52 million.</p>
+<p>In other words:</p>
+<p><span class="math display">\[
+Average\ net\ FDI\ inflows = \beta_0 + \beta_1 Institution\ established + \epsilon
+\]</span></p>
+<p>When an institution was established (i.e.&nbsp;<span class="math inline">\(Institution\ established = 1\)</span>):</p>
+<p><span class="math display">\[
+Average\ net\ FDI\ inflows = 425.01 + 1763.52 * 1 + \epsilon \\
+\]</span></p>
+<p><span class="math display">\[
+Average\ net\ FDI\ inflows = 2188.52
+\]</span></p>
+</div>
+</div>
+</div>
+<section id="substantive-significance" class="level3"><h3 class="anchored" data-anchor-id="substantive-significance">Substantive significance</h3>
+<p>This finding is substantively significant. These countries are recovering from conflict: their economies are really weak. Leaders are often very keen to find stable and reliable sources of funding to promote and strengthen their battered economies. This average difference of $1,763.52 million is; therefore, likely to incentivize this policy.</p>
+<p>Further, if we look at the range of plausible values of the coefficient on the existence of a PCJ institution (i.e.&nbsp;the confidence interval) we can see states that did not establish a commission plausibly receive no net FDI inflows in this post-conflict period. In fact, it is plausible that investment leaves their economies: this net inflow can be negative. On the other hand, states that do establish a commission enjoy, on average, billions in net FDI inflows. For an economy struggling to establish indigenous production in a post-conflict setting, this can be critical to their long-term economic development. Again, this is further proof of the substantive significance of this relationship.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Visualizing the full range of plausible coefficients can be a great way to communicate your findings:</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/plot_predictions.html">plot_predictions</a></span><span class="op">(</span><span class="va">m</span>, condition <span class="op">=</span> <span class="st">"pcj"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Net FDI inflows (USD million)"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/dollar_format.html">dollar</a></span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="04-02-linear_regression_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section></section><section id="but-what-about-other-factors-that-shape-net-fdi-inflows" class="level2"><h2 class="anchored" data-anchor-id="but-what-about-other-factors-that-shape-net-fdi-inflows">But what about other factors that shape net FDI inflows?</h2>
+<p>One of Appel and Loyle’s major contributions is their critique of approaches to estimating net FDI inflows that focus only on economic factors. They argue that there are several political factors that are significant determinants of other countries’ and foreign firms’ willingness to invest in these war-torn countries.</p>
+<p>This critique is very valid, but it suggests that there are many different things influencing this outcome of interest, including economic factors. We have only looked at the political! The economists might turn around and accuse us of doing the very thing Appel and Loyle accused them of!</p>
+<p>Let’s add some of those economic factors into our model. We will start with an intuitive one: individuals’ economic wealth (measured as GDP per capita). I expect that foreign firms will be more willing to invest larger sums of money into economies with richer citizens. These citizens will be more willing and able to purchase the goods and services provided by those firms.</p>
+<p>Therefore, I hypothesize that the greater a state’s GDP per capita, the larger its net FDI inflows. I expect this to be the case regardless of whether the state has established a PCJ institution. Let’s test this claim:</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">net_fdi_inflows</span> <span class="op">~</span> <span class="va">pcj</span> <span class="op">+</span> <span class="va">gdp_per_capita</span>, data <span class="op">=</span> <span class="va">ebj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://modelsummary.com/man/modelsummary.html">modelsummary</a></span><span class="op">(</span><span class="va">m</span>, </span>
+<span>             coef_rename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pcjPCJ institutions"</span> <span class="op">=</span> <span class="st">"PCJ institutions established"</span>,</span>
+<span>                             <span class="st">"gdp_per_capita"</span> <span class="op">=</span> <span class="st">"GDP per capita (current USD)"</span><span class="op">)</span>,</span>
+<span>             stars <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_7fbmvezcdiw3ndu9ccqe(i, j, css_id) {
+          var table = document.getElementById("tinytable_7fbmvezcdiw3ndu9ccqe");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_7fbmvezcdiw3ndu9ccqe');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_7fbmvezcdiw3ndu9ccqe(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_7fbmvezcdiw3ndu9ccqe");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_zqddhlcjua2u9hp23ukx',}, 
+          { positions: [ { i: 13, j: 1 },  ], css_id: 'tinytable_css_yy6abb8xsmm3c6cvbjc8',}, 
+          { positions: [ { i: 1, j: 1 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 10, j: 1 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 9, j: 1 }, { i: 11, j: 1 }, { i: 12, j: 1 },  ], css_id: 'tinytable_css_v6d66c60tyeirwnepfx0',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_uhoklgh1wkat6mjavdlq',}, 
+          { positions: [ { i: 6, j: 0 },  ], css_id: 'tinytable_css_esth61iepfnkosp6v5wc',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 10, j: 0 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 9, j: 0 }, { i: 11, j: 0 }, { i: 12, j: 0 },  ], css_id: 'tinytable_css_erintmqtb2uyj3cfuakz',}, 
+          { positions: [ { i: 6, j: 1 },  ], css_id: 'tinytable_css_dberxdwq7stvk2uluw65',}, 
+          { positions: [ { i: 13, j: 0 },  ], css_id: 'tinytable_css_9nj5xsmen0wj5ukr8wy5',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_7fbmvezcdiw3ndu9ccqe(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script><style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_zqddhlcjua2u9hp23ukx, .table th.tinytable_css_zqddhlcjua2u9hp23ukx { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_yy6abb8xsmm3c6cvbjc8, .table th.tinytable_css_yy6abb8xsmm3c6cvbjc8 { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_v6d66c60tyeirwnepfx0, .table th.tinytable_css_v6d66c60tyeirwnepfx0 { text-align: center; }
+      .table td.tinytable_css_uhoklgh1wkat6mjavdlq, .table th.tinytable_css_uhoklgh1wkat6mjavdlq { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_esth61iepfnkosp6v5wc, .table th.tinytable_css_esth61iepfnkosp6v5wc { text-align: left; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_erintmqtb2uyj3cfuakz, .table th.tinytable_css_erintmqtb2uyj3cfuakz { text-align: left; }
+      .table td.tinytable_css_dberxdwq7stvk2uluw65, .table th.tinytable_css_dberxdwq7stvk2uluw65 { text-align: center; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_9nj5xsmen0wj5ukr8wy5, .table th.tinytable_css_9nj5xsmen0wj5ukr8wy5 { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+    </style>
+<div class="container">
+      <table class="table table-borderless" id="tinytable_7fbmvezcdiw3ndu9ccqe" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col"> </th>
+                <th scope="col">(1)</th>
+              </tr></thead>
+<tfoot><tr><td colspan="2">+ p </td></tr></tfoot>
+<tbody>
+<tr>
+<td>(Intercept)                 </td>
+                  <td>-319.173 </td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(396.052)</td>
+                </tr>
+<tr>
+<td>PCJ institutions established</td>
+                  <td>1673.288*</td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(714.015)</td>
+                </tr>
+<tr>
+<td>GDP per capita (current USD)</td>
+                  <td>0.318**  </td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(0.105)  </td>
+                </tr>
+<tr>
+<td>Num.Obs.                    </td>
+                  <td>95       </td>
+                </tr>
+<tr>
+<td>R2                          </td>
+                  <td>0.142    </td>
+                </tr>
+<tr>
+<td>R2 Adj.                     </td>
+                  <td>0.124    </td>
+                </tr>
+<tr>
+<td>AIC                         </td>
+                  <td>1777.5   </td>
+                </tr>
+<tr>
+<td>BIC                         </td>
+                  <td>1787.7   </td>
+                </tr>
+<tr>
+<td>Log.Lik.                    </td>
+                  <td>-884.742 </td>
+                </tr>
+<tr>
+<td>RMSE                        </td>
+                  <td>2681.52  </td>
+                </tr>
+</tbody>
+</table>
+</div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+<p>We continue to find a positive and statistically significant relationship between net FDI inflows and the establishment of a PCJ institution. This model also accounts for the association between the state’s GDP per capita and those inflows.</p>
+<p>The intercept here is not informative on its own. It tells us the estimated average net FDI inflows for states that do not have PCJ institutions and in which citizens had a GDP per capita of $0. Although the majority of states did not establish an institution, there are no states in the world that have a GDP per capita of $0.</p>
+<p>Let’s instead focus on the other coefficients. We find that states that established a PCJ institution received, on average, net FDI inflows of $1,673.29 million more than states that did not in the 10-year period after conflict. This is a slightly smaller estimated difference than we found in the model that did not account for individuals’ average wealth, but it remains large.</p>
+<p>We also find that an increase in the GDP per capita of a state of $1,000 is associated with an increase of $318.45 million in net FDI inflow. This is consistent with our expectations that, holding all else constant, a country with a richer population is a more attractive investment destination than a country that has poorer citizens.</p>
+<section id="using-this-richer-model" class="level3"><h3 class="anchored" data-anchor-id="using-this-richer-model">Using this richer model</h3>
+<p>We now have a richer understanding of the determinants of net FDI inflows to post-conflict countries. We have accounted for both economic and political determinants of those flows. Although it is often useful to look at the estimated relationship of each of those variables individually (as we did just above), we often learn more by looking at the whole model in context.</p>
+<p>As usual, one of the easiest ways to communicate this is through a visualization. Let’s look at the predicted net FDI inflows for post-conflict countries that established and did not establish PCJ institutions across a range of plausible GDP per capita values:</p>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/plot_predictions.html">plot_predictions</a></span><span class="op">(</span><span class="va">m</span>, condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gdp_per_capita"</span>, <span class="st">"pcj"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"GDP per capita (USD)"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Net FDI inflows (USD million)"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/dollar_format.html">dollar</a></span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/dollar_format.html">dollar</a></span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="04-02-linear_regression_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can see the positive relationship between GDP per capita and net FDI inflows <em>and</em> that across any given value of GDP per capita states that have established a PCJ institution start and stay at a higher predicted inflow compared to those that did not.</p>
+</section><section id="the-full-model" class="level3"><h3 class="anchored" data-anchor-id="the-full-model">The full model</h3>
+<p>Appel and Loyle control for many more economic and political factors shaping net FDI inflows. Remember, they are arguing that the extensive literature that looks at the determinants of FDI flows to post-conflict states failed to account for this important political factor. However, that same literature did a very good job of identifying the economic factors, including countries’ economic development, size, and growth rates, that shape this outcome. They don’t dispute that these factors are also important, they just argue that we should also think about the role PCJ institutions play in shaping foreign firms’ beliefs about the risk of returning to violence.</p>
+<p>So, let’s account for these other factors:</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">net_fdi_inflows</span> <span class="op">~</span> <span class="va">pcj</span> <span class="op">+</span> <span class="va">gdp_per_capita</span> <span class="op">+</span> <span class="va">gdp</span> <span class="op">+</span> <span class="va">gdp_per_capita_growth</span> <span class="op">+</span> </span>
+<span>          <span class="va">cap_account_openness</span> <span class="op">+</span> <span class="va">ex_rate_fluc</span> <span class="op">+</span> <span class="va">labor</span> <span class="op">+</span> <span class="va">f_life_exp</span> <span class="op">+</span> </span>
+<span>          <span class="va">pol_constraints</span> <span class="op">+</span> <span class="va">polity2</span> <span class="op">+</span> <span class="va">damage</span> <span class="op">+</span> <span class="va">conflict_duration</span> <span class="op">+</span> <span class="va">peace_agreement</span> <span class="op">+</span> </span>
+<span>          <span class="va">victory</span> <span class="op">+</span> <span class="va">cold_war</span>, </span>
+<span>        data <span class="op">=</span> <span class="va">ebj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://modelsummary.com/man/modelsummary.html">modelsummary</a></span><span class="op">(</span><span class="va">m</span>, </span>
+<span>             coef_rename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pcjPCJ institutions"</span> <span class="op">=</span> <span class="st">"PCJ institutions established"</span>,</span>
+<span>                             <span class="st">"gdp_per_capita"</span> <span class="op">=</span> <span class="st">"GDP per capita (current USD)"</span>,</span>
+<span>                             <span class="st">"gdp"</span> <span class="op">=</span> <span class="st">"GDP (current USD)"</span>,</span>
+<span>                             <span class="st">"gdp_per_capita_growth"</span> <span class="op">=</span> <span class="st">"GDP per capita growth rate (%)"</span>,</span>
+<span>                             <span class="st">"cap_account_openness"</span> <span class="op">=</span> <span class="st">"Capital account openness"</span>,</span>
+<span>                             <span class="st">"ex_rate_fluc"</span> <span class="op">=</span> <span class="st">"Exchange rate fluctuation"</span>,</span>
+<span>                             <span class="st">"labor"</span> <span class="op">=</span> <span class="st">"Labor force participation (%)"</span>,</span>
+<span>                             <span class="st">"f_life_exp"</span> <span class="op">=</span> <span class="st">"Average female life expectancy (years)"</span>,</span>
+<span>                             <span class="st">"pol_constraints"</span> <span class="op">=</span> <span class="st">"Political constraints"</span>,</span>
+<span>                             <span class="st">"polity2"</span> <span class="op">=</span> <span class="st">"Regime type (Polity score)"</span>,</span>
+<span>                             <span class="st">"damage"</span> <span class="op">=</span> <span class="st">"Pre-conflict GDP lost"</span>,</span>
+<span>                             <span class="st">"conflict_duration"</span> <span class="op">=</span> <span class="st">"Conflict duration (years)"</span>,</span>
+<span>                             <span class="st">"peace_agreementPeace agreement"</span> <span class="op">=</span> <span class="st">"Peace agreement"</span>,</span>
+<span>                             <span class="st">"victoryVictory"</span> <span class="op">=</span> <span class="st">"Decisive victory"</span>,</span>
+<span>                             <span class="st">"cold_warCold War"</span> <span class="op">=</span> <span class="st">"Cold War"</span><span class="op">)</span>,</span>
+<span>             stars <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_6wxtbb6ls7qilal07vhi(i, j, css_id) {
+          var table = document.getElementById("tinytable_6wxtbb6ls7qilal07vhi");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_6wxtbb6ls7qilal07vhi');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_6wxtbb6ls7qilal07vhi(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_6wxtbb6ls7qilal07vhi");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 39, j: 1 },  ], css_id: 'tinytable_css_wc8umcv2bg4i97l7rga6',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_fv3twpcexckvnpaim2gd',}, 
+          { positions: [ { i: 32, j: 0 },  ], css_id: 'tinytable_css_ab0pvr2w1fwnqznx6ifd',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 6, j: 0 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 9, j: 0 }, { i: 10, j: 0 }, { i: 11, j: 0 }, { i: 12, j: 0 }, { i: 13, j: 0 }, { i: 14, j: 0 }, { i: 15, j: 0 }, { i: 16, j: 0 }, { i: 17, j: 0 }, { i: 18, j: 0 }, { i: 19, j: 0 }, { i: 20, j: 0 }, { i: 21, j: 0 }, { i: 22, j: 0 }, { i: 23, j: 0 }, { i: 24, j: 0 }, { i: 25, j: 0 }, { i: 26, j: 0 }, { i: 27, j: 0 }, { i: 28, j: 0 }, { i: 29, j: 0 }, { i: 30, j: 0 }, { i: 31, j: 0 }, { i: 36, j: 0 }, { i: 33, j: 0 }, { i: 34, j: 0 }, { i: 35, j: 0 }, { i: 37, j: 0 }, { i: 38, j: 0 },  ], css_id: 'tinytable_css_9ea2wt06bir7ilipqq9l',}, 
+          { positions: [ { i: 1, j: 1 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 6, j: 1 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 9, j: 1 }, { i: 10, j: 1 }, { i: 11, j: 1 }, { i: 12, j: 1 }, { i: 13, j: 1 }, { i: 14, j: 1 }, { i: 15, j: 1 }, { i: 16, j: 1 }, { i: 17, j: 1 }, { i: 18, j: 1 }, { i: 19, j: 1 }, { i: 20, j: 1 }, { i: 21, j: 1 }, { i: 22, j: 1 }, { i: 23, j: 1 }, { i: 24, j: 1 }, { i: 25, j: 1 }, { i: 26, j: 1 }, { i: 27, j: 1 }, { i: 28, j: 1 }, { i: 29, j: 1 }, { i: 30, j: 1 }, { i: 31, j: 1 }, { i: 36, j: 1 }, { i: 33, j: 1 }, { i: 34, j: 1 }, { i: 35, j: 1 }, { i: 37, j: 1 }, { i: 38, j: 1 },  ], css_id: 'tinytable_css_4lsyopf3r8qwwog7q7cs',}, 
+          { positions: [ { i: 32, j: 1 },  ], css_id: 'tinytable_css_2vtu6ox0xnunfqjqcihi',}, 
+          { positions: [ { i: 39, j: 0 },  ], css_id: 'tinytable_css_2332rx8ooh2qomll05al',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_1uxnu6wyrnt4mmhwnpgu',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_6wxtbb6ls7qilal07vhi(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script><style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_wc8umcv2bg4i97l7rga6, .table th.tinytable_css_wc8umcv2bg4i97l7rga6 { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_fv3twpcexckvnpaim2gd, .table th.tinytable_css_fv3twpcexckvnpaim2gd { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_ab0pvr2w1fwnqznx6ifd, .table th.tinytable_css_ab0pvr2w1fwnqznx6ifd { text-align: left; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_9ea2wt06bir7ilipqq9l, .table th.tinytable_css_9ea2wt06bir7ilipqq9l { text-align: left; }
+      .table td.tinytable_css_4lsyopf3r8qwwog7q7cs, .table th.tinytable_css_4lsyopf3r8qwwog7q7cs { text-align: center; }
+      .table td.tinytable_css_2vtu6ox0xnunfqjqcihi, .table th.tinytable_css_2vtu6ox0xnunfqjqcihi { text-align: center; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_2332rx8ooh2qomll05al, .table th.tinytable_css_2332rx8ooh2qomll05al { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_1uxnu6wyrnt4mmhwnpgu, .table th.tinytable_css_1uxnu6wyrnt4mmhwnpgu { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </style>
+<div class="container">
+      <table class="table table-borderless" id="tinytable_6wxtbb6ls7qilal07vhi" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col"> </th>
+                <th scope="col">(1)</th>
+              </tr></thead>
+<tfoot><tr><td colspan="2">+ p </td></tr></tfoot>
+<tbody>
+<tr>
+<td>(Intercept)                           </td>
+                  <td>-1278.322 </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(2852.294)</td>
+                </tr>
+<tr>
+<td>PCJ institutions established          </td>
+                  <td>1960.282**</td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(702.992) </td>
+                </tr>
+<tr>
+<td>GDP per capita (current USD)          </td>
+                  <td>-0.111    </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(0.133)   </td>
+                </tr>
+<tr>
+<td>GDP (current USD)                     </td>
+                  <td>0.000***  </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(0.000)   </td>
+                </tr>
+<tr>
+<td>GDP per capita growth rate (%)        </td>
+                  <td>37.400    </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(23.239)  </td>
+                </tr>
+<tr>
+<td>Capital account openness              </td>
+                  <td>198.823   </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(201.590) </td>
+                </tr>
+<tr>
+<td>Exchange rate fluctuation             </td>
+                  <td>-42.516** </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(13.888)  </td>
+                </tr>
+<tr>
+<td>Labor force participation (%)         </td>
+                  <td>9.844     </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(25.528)  </td>
+                </tr>
+<tr>
+<td>Average female life expectancy (years)</td>
+                  <td>3.475     </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(32.993)  </td>
+                </tr>
+<tr>
+<td>Political constraints                 </td>
+                  <td>2557.954+ </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(1459.599)</td>
+                </tr>
+<tr>
+<td>Regime type (Polity score)            </td>
+                  <td>-90.169   </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(56.309)  </td>
+                </tr>
+<tr>
+<td>Pre-conflict GDP lost                 </td>
+                  <td>28.379**  </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(10.242)  </td>
+                </tr>
+<tr>
+<td>Conflict duration (years)             </td>
+                  <td>0.811     </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(35.543)  </td>
+                </tr>
+<tr>
+<td>Peace agreement                       </td>
+                  <td>-1215.137 </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(793.826) </td>
+                </tr>
+<tr>
+<td>Decisive victory                      </td>
+                  <td>-33.969   </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(650.725) </td>
+                </tr>
+<tr>
+<td>Cold War                              </td>
+                  <td>81.531    </td>
+                </tr>
+<tr>
+<td>                                      </td>
+                  <td>(654.092) </td>
+                </tr>
+<tr>
+<td>Num.Obs.                              </td>
+                  <td>95        </td>
+                </tr>
+<tr>
+<td>R2                                    </td>
+                  <td>0.514     </td>
+                </tr>
+<tr>
+<td>R2 Adj.                               </td>
+                  <td>0.422     </td>
+                </tr>
+<tr>
+<td>AIC                                   </td>
+                  <td>1749.5    </td>
+                </tr>
+<tr>
+<td>BIC                                   </td>
+                  <td>1792.9    </td>
+                </tr>
+<tr>
+<td>Log.Lik.                              </td>
+                  <td>-857.752  </td>
+                </tr>
+<tr>
+<td>RMSE                                  </td>
+                  <td>2018.34   </td>
+                </tr>
+</tbody>
+</table>
+</div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+<p>Even when we account for all the political, economic, and conflict-related factors that the literature previously identified to be important, we still find that the existence of PCJ institution substantively and statistically significantly shapes the net FDI inflows of post-conflict states.</p>
+</section></section><section id="including-categorical-variables-with-multiple-categories" class="level2"><h2 class="anchored" data-anchor-id="including-categorical-variables-with-multiple-categories">Including categorical variables with multiple categories</h2>
+<p>Appel and Loyle look at a number of political factors driving net FDI inflows to post-conflict states. They include a measure of regime type: the country’s Polity score. This score measures a state’s regime type along a 21-point scale from -10 (perfect autocracy) to 10 (perfect democracy). Broadly speaking, political scientists have usefully broken this spectrum down into three regime types: democracies, hybrid regimes, and autocracies.</p>
+<p>Let’s modify their measure of regime type to reflect these broad categories, instead of treating it as a continuous variable:</p>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ebj</span> <span class="op">&lt;-</span> <span class="va">ebj</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>regime_type <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span><span class="va">polity2</span> <span class="op">&gt;</span> <span class="fl">5</span> <span class="op">~</span> <span class="st">"Democracy"</span>,</span>
+<span>                                 <span class="va">polity2</span> <span class="op">&lt;</span> <span class="op">-</span><span class="fl">5</span> <span class="op">~</span> <span class="st">"Autocracy"</span>,</span>
+<span>                                 <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Hybrid regime"</span><span class="op">)</span>,</span>
+<span>         regime_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">regime_type</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Autocracy"</span>,</span>
+<span>                                                      <span class="st">"Hybrid regime"</span>,</span>
+<span>                                                      <span class="st">"Democracy"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I have a theoretical reason to do this. I suspect that there is not a clear linear relationship between investors’ confidence in a post-conflict state and its regime type when we treat regime type as a continuous spectrum moving linearly from autocracies to democracies. In other words, I don’t think that moving one Polity score away from being an autocracy to being a democracy would have a consistent effect on investor confidence (and; therefore, net FDI inflows). Appel and Loyle’s model agrees with me: the regime type variable is not statistically significant.</p>
+<p>Rather, I suspect that strong democracies and strong autocracies provide the political stability required to comfort foreign investors. These investors believe that the strong control democrats and autocrats have over their citizens and institutions reduces the risk that the country will re-enter into conflict. However, hybrid regimes do not tend to have this level of control. Investors are; therefore, less likely to invest in post-conflict countries with hybrid regimes.</p>
+<p>Let’s test this!</p>
+<p>We now have a categorical variable with three categories: democracy, hybrid regime, and autocracy. We have thus far largely dealt with binary categorical variables (voted or not, Southern or not, female or not). How do we use and interpret multiple categorical variables in regression analysis?</p>
+<p>Happily, the intuition remains the same as with our binary categorical variables. We hold one category out as our baseline category and then compare the associated effects of the other categories to this one.</p>
+<p>Let’s step through that using a stripped back version of our model:</p>
+<div class="cell">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">net_fdi_inflows</span> <span class="op">~</span> <span class="va">pcj</span> <span class="op">+</span> <span class="va">regime_type</span>, data <span class="op">=</span> <span class="va">ebj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://modelsummary.com/man/modelsummary.html">modelsummary</a></span><span class="op">(</span><span class="va">m</span>, </span>
+<span>             coef_rename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pcjPCJ institutions"</span> <span class="op">=</span> <span class="st">"PCJ institutions established"</span>,</span>
+<span>                             <span class="st">"regime_typeDemocracy"</span> <span class="op">=</span> <span class="st">"Democracy"</span>,</span>
+<span>                             <span class="st">"regime_typeHybrid regime"</span> <span class="op">=</span> <span class="st">"Hybrid"</span><span class="op">)</span>,</span>
+<span>             stars <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_w94fuv33ft4opfpzr1sv(i, j, css_id) {
+          var table = document.getElementById("tinytable_w94fuv33ft4opfpzr1sv");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_w94fuv33ft4opfpzr1sv');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_w94fuv33ft4opfpzr1sv(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_w94fuv33ft4opfpzr1sv");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 15, j: 1 },  ], css_id: 'tinytable_css_y7b53smbqq95w83u3cxo',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_wvvsg41a17s9d96nttrt',}, 
+          { positions: [ { i: 8, j: 0 },  ], css_id: 'tinytable_css_tu0dbbrb110k7xj70ydp',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 6, j: 0 }, { i: 7, j: 0 }, { i: 12, j: 0 }, { i: 9, j: 0 }, { i: 10, j: 0 }, { i: 11, j: 0 }, { i: 13, j: 0 }, { i: 14, j: 0 },  ], css_id: 'tinytable_css_rtcv1md7s1635rt167gs',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_m83y3gatok24zbyiz12b',}, 
+          { positions: [ { i: 1, j: 1 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 6, j: 1 }, { i: 7, j: 1 }, { i: 12, j: 1 }, { i: 9, j: 1 }, { i: 10, j: 1 }, { i: 11, j: 1 }, { i: 13, j: 1 }, { i: 14, j: 1 },  ], css_id: 'tinytable_css_ly8w3lgqbfjrahyn2td8',}, 
+          { positions: [ { i: 8, j: 1 },  ], css_id: 'tinytable_css_i65yrh4vylc1i9fdofm7',}, 
+          { positions: [ { i: 15, j: 0 },  ], css_id: 'tinytable_css_hzs6sbrx6ugb0p5jvn8f',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_w94fuv33ft4opfpzr1sv(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script><style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_y7b53smbqq95w83u3cxo, .table th.tinytable_css_y7b53smbqq95w83u3cxo { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_wvvsg41a17s9d96nttrt, .table th.tinytable_css_wvvsg41a17s9d96nttrt { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_tu0dbbrb110k7xj70ydp, .table th.tinytable_css_tu0dbbrb110k7xj70ydp { text-align: left; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_rtcv1md7s1635rt167gs, .table th.tinytable_css_rtcv1md7s1635rt167gs { text-align: left; }
+      .table td.tinytable_css_m83y3gatok24zbyiz12b, .table th.tinytable_css_m83y3gatok24zbyiz12b { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_ly8w3lgqbfjrahyn2td8, .table th.tinytable_css_ly8w3lgqbfjrahyn2td8 { text-align: center; }
+      .table td.tinytable_css_i65yrh4vylc1i9fdofm7, .table th.tinytable_css_i65yrh4vylc1i9fdofm7 { text-align: center; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_hzs6sbrx6ugb0p5jvn8f, .table th.tinytable_css_hzs6sbrx6ugb0p5jvn8f { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+    </style>
+<div class="container">
+      <table class="table table-borderless" id="tinytable_w94fuv33ft4opfpzr1sv" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col"> </th>
+                <th scope="col">(1)</th>
+              </tr></thead>
+<tfoot><tr><td colspan="2">+ p </td></tr></tfoot>
+<tbody>
+<tr>
+<td>(Intercept)                 </td>
+                  <td>214.555  </td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(497.984)</td>
+                </tr>
+<tr>
+<td>PCJ institutions established</td>
+                  <td>1816.169*</td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(764.093)</td>
+                </tr>
+<tr>
+<td>Hybrid                      </td>
+                  <td>553.893  </td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(667.644)</td>
+                </tr>
+<tr>
+<td>Democracy                   </td>
+                  <td>-148.124 </td>
+                </tr>
+<tr>
+<td>                            </td>
+                  <td>(809.623)</td>
+                </tr>
+<tr>
+<td>Num.Obs.                    </td>
+                  <td>95       </td>
+                </tr>
+<tr>
+<td>R2                          </td>
+                  <td>0.068    </td>
+                </tr>
+<tr>
+<td>R2 Adj.                     </td>
+                  <td>0.037    </td>
+                </tr>
+<tr>
+<td>AIC                         </td>
+                  <td>1787.4   </td>
+                </tr>
+<tr>
+<td>BIC                         </td>
+                  <td>1800.1   </td>
+                </tr>
+<tr>
+<td>Log.Lik.                    </td>
+                  <td>-888.688 </td>
+                </tr>
+<tr>
+<td>RMSE                        </td>
+                  <td>2795.25  </td>
+                </tr>
+</tbody>
+</table>
+</div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+<p>You’ll note that autocracies are missing from our regression table. This is because they are being held out as our baseline category. Their effect on net FDI inflows is captured by the intercept coefficient.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We often say that the intercept coefficient represents the predicted average value of our outcome of interest when all independent variables are set to zero. It might be useful for you to think of your baseline category as taking on the value zero. For example, we can think of <code>autocracy = 0</code>.</p>
+</div>
+</div>
+<p>Our model suggests that autocracies (<code>regime_type = "Autocracy"</code>) that have not established a commission (<code>pcj = "No institutions"</code>) have a predicted average net FDI inflow of $214.55 million.</p>
+<p>The coefficients on democracies and hybrid regimes need to be interpreted in relation to autocracies (their baseline category). From our model, we can see that the coefficient for democracies is negative and the coefficient for hybrid regimes is positive. That means that, on average, democracies tend to receive less net FDI inflows than autocracies and hybrid regimes tend to receive more net FDI inflows than autocracies.</p>
+<section id="predictions-with-multiple-categorical-variables" class="level3"><h3 class="anchored" data-anchor-id="predictions-with-multiple-categorical-variables">Predictions with multiple categorical variables</h3>
+<p>Using our model, what do we predict to be the net FDI inflows for democracies, autocracies, and hybrid regimes that either have a PCJ institutions or do not?</p>
+<p>First, let’s create a table with each possible combination of these two variables of interest:</p>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>pcj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"No institutions"</span>, </span>
+<span>                                  <span class="st">"PCJ institutions"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/cross_join.html">cross_join</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>regime_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Autocracy"</span>, <span class="st">"Democracy"</span>, <span class="st">"Hybrid regime"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">new_data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  pcj              regime_type  
+  &lt;fct&gt;            &lt;fct&gt;        
+1 No institutions  Autocracy    
+2 No institutions  Democracy    
+3 No institutions  Hybrid regime
+4 PCJ institutions Autocracy    
+5 PCJ institutions Democracy    
+6 PCJ institutions Hybrid regime</code></pre>
+</div>
+</div>
+<p>Then we can use our model to predict what we expect a hypothetical state with each of these combinations of characteristics to receive in net FDI inflows:</p>
+<div class="cell">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html">augment</a></span><span class="op">(</span><span class="va">m</span>, newdata <span class="op">=</span> <span class="va">new_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pred</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  pcj              regime_type   .fitted
+  &lt;fct&gt;            &lt;fct&gt;           &lt;dbl&gt;
+1 No institutions  Autocracy       215. 
+2 No institutions  Democracy        66.4
+3 No institutions  Hybrid regime   768. 
+4 PCJ institutions Autocracy      2031. 
+5 PCJ institutions Democracy      1883. 
+6 PCJ institutions Hybrid regime  2585. </code></pre>
+</div>
+</div>
+<p>That’s a bit unweildy. Let’s visualize it!</p>
+<div class="cell">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">pred</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.fitted</span>, y <span class="op">=</span> <span class="va">pcj</span>, colour <span class="op">=</span> <span class="va">regime_type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Predicted net FDI inflows (USD, million)"</span>,</span>
+<span>       y <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>       colour <span class="op">=</span> <span class="st">"Regime type"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="04-02-linear_regression_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can clearly see that states that established PCJ institutions received, on average, larger net FDI inflows than states that did not, no matter their regime type. Further and completely counter to my hypothesis, hybrid regimes have, on average, the highest net FDI inflows compared to democracies and autocracies even when we account for whether the state has a PCJ institution.</p>
+<p>I’m not too worried: none of these coefficients are anywhere close to being statistically significant. I suspect that there is a more complex relationship underlying commercial actors’ beliefs about the stability of hybrid regimes, democracies, and autocracies and its effect on <em>net</em> investment flows. But I hope this serves as a good illustration of how we can use multiple categorical variables in our analyses.</p>
+
+
+
+</section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-appel2012" class="csl-entry" role="listitem">
+Appel, Benjamin J, and Cyanne E Loyle. 2012. <span>“The Economic Benefits of Justice: Post-Conflict Justice and Foreign Direct Investment.”</span> <em>Journal of Peace Research</em> 49 (5): 685–99. <a href="https://doi.org/10.1177/0022343312450044">https://doi.org/10.1177/0022343312450044</a>.
+</div>
+</div></section></div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Content <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2025 by <a href="https://www.harrietgoers.com">Harriet Goers</a> <br> All content licensed under a <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> <i class="fa-brands fa-creative-commons-nc" aria-label="creative-commons-nc"></i> <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-Non Commercial 4.0 International license (CC BY-NC 4.0)</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hgoers/GVPT339F/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a><br><a href="https://www.andrewheiss.com/teaching/">Heavily inspired by course websites built by Dr Andrew Heiss</a></p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

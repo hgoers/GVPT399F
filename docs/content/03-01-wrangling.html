@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Data Wrangling – GVPT399F</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="..//files/img/hex-testudo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><link rel="stylesheet" href="../html/custom.css">
+</head>
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">GVPT399F</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../content/00-introduction.html" aria-current="page"> 
+<span class="menu-text">Content</span></a>
+  </li>  
+</ul>
+</div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../content/03-01-wrangling.html">Session 3</a></li><li class="breadcrumb-item"><a href="../content/03-01-wrangling.html">Data Wrangling</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Session 0</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/00-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Session 1</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/01-01-visualization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducing R Through Data Visualization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/01-02-experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Causes and Effects</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Session 2</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/02-01-transformation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Transformation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/02-02-surveys_to_pops.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Samples to the Population</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Session 3</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/03-01-wrangling.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Wrangling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../content/03-02-bivariate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploring the Relationship Between Two Variables</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#set-up" id="toc-set-up" class="nav-link active" data-scroll-target="#set-up">Set up</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#lengthening-messy-data" id="toc-lengthening-messy-data" class="nav-link" data-scroll-target="#lengthening-messy-data">Lengthening messy data</a></li>
+  <li><a href="#widening-messy-data" id="toc-widening-messy-data" class="nav-link" data-scroll-target="#widening-messy-data">Widening messy data</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/hgoers/GVPT339F/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../content/03-01-wrangling.html">Session 3</a></li><li class="breadcrumb-item"><a href="../content/03-01-wrangling.html">Data Wrangling</a></li></ol></nav><div class="quarto-title">
+<h1 class="title">Data Wrangling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="set-up" class="level2"><h2 class="anchored" data-anchor-id="set-up">Set up</h2>
+<p>To complete this session, you need to load in the following R packages:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Install packages
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To install new R packages, run the following (excluding the packages you have already installed):</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"janitor"</span>, <span class="st">"scales"</span>, <span class="st">"wbstats"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org">scales</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nset-ornl/wbstats">wbstats</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="introduction" class="level2"><h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>I am now going to introduce you to a set of important tools for tidying your data. Oftentimes, the data we want to work with does not come to us in a format that is easy for us to use. We need to wrangle it into a better structure and remove inconsistencies.</p>
+<p>We will continue to work with the variables the Gapminder Project is interested in: health and wealth. However, instead of accessing the lovely clean data set provided to you in the <code>gapminder</code> R package, we are going to go straight to the source and collect data on countries’ GDP per capita and average life expectancy from the World Bank. Let’s get started!</p>
+</section><section id="lengthening-messy-data" class="level2"><h2 class="anchored" data-anchor-id="lengthening-messy-data">Lengthening messy data</h2>
+<p>The World Bank provides us with access to a trove of official country- and sub-national level data that are very useful for political analysis. I use their data in nearly all of my research. Sadly, they tend to provide their data in a messy format. We will now collect that messy data so we can learn how to tidy it up.</p>
+<p>To access their data and some wonderful data visualizations, you can head over to their data portal: <a href="https://data.worldbank.org/" class="uri">https://data.worldbank.org/</a>. From there, you can browse which data sets they have or search for ones you are interested in.</p>
+<p>We are going to start by collecting data on countries’ GDP per capita (current US$). It can be accessed here: <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CD" class="uri">https://data.worldbank.org/indicator/NY.GDP.PCAP.CD</a>. You can download the data directly from this web page, save it in the appropriate place in your RProject, and read it in from there.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This process is similar to the one we used in Session 2: From Samples to the Population.</p>
+</div>
+</div>
+<p>I saved the CSV in the <code>data</code> folder (which is the in the <code>content</code> folder because this is a website), so I will use <code><a href="https://here.r-lib.org//reference/here.html">here::here()</a></code> to adaptively find the correct file path and read the file in using <code><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv()</a></code>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"content"</span>, <span class="st">"data"</span>, </span>
+<span>                                       <span class="st">"API_NY.GDP.PCAP.CD_DS2_en_csv_v2_76.csv"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After running this yourself, you will see an ominous warning. Let’s take a look at our data:</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap_raw</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 268 × 3
+   `Data Source`               `World Development Indicators` ...3              
+   &lt;chr&gt;                       &lt;chr&gt;                          &lt;chr&gt;             
+ 1 Last Updated Date           2024-12-16                      &lt;NA&gt;             
+ 2 Country Name                Country Code                   "Indicator Name,I…
+ 3 Aruba                       ABW                            "GDP per capita (…
+ 4 Africa Eastern and Southern AFE                            "GDP per capita (…
+ 5 Afghanistan                 AFG                            "GDP per capita (…
+ 6 Africa Western and Central  AFW                            "GDP per capita (…
+ 7 Angola                      AGO                            "GDP per capita (…
+ 8 Albania                     ALB                            "GDP per capita (…
+ 9 Andorra                     AND                            "GDP per capita (…
+10 Arab World                  ARB                            "GDP per capita (…
+# ℹ 258 more rows</code></pre>
+</div>
+</div>
+<p>We have only three columns, none of which appear to have the right names. It also looks like the first few rows may, in fact, not be rows in our data set. Rather, they are metadata, including the last time the data were updated.</p>
+<p>The second row in our data set looks like the real column headings. This is good! We can skip the first few rows using <code><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv()</a></code>’s <code>skip</code> argument. Just provide it with the number of rows you want to skip when reading in the CSV.</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"content"</span>, <span class="st">"data"</span>, </span>
+<span>                                       <span class="st">"API_NY.GDP.PCAP.CD_DS2_en_csv_v2_76.csv"</span><span class="op">)</span>,</span>
+<span>                            skip <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gdp_per_cap_raw</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 266 × 69
+   `Country Name` `Country Code` `Indicator Name` `Indicator Code` `1960` `1961`
+   &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Aruba          ABW            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+ 2 Africa Easter… AFE            GDP per capita … NY.GDP.PCAP.CD     186.   187.
+ 3 Afghanistan    AFG            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+ 4 Africa Wester… AFW            GDP per capita … NY.GDP.PCAP.CD     122.   127.
+ 5 Angola         AGO            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+ 6 Albania        ALB            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+ 7 Andorra        AND            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+ 8 Arab World     ARB            GDP per capita … NY.GDP.PCAP.CD      NA    213.
+ 9 United Arab E… ARE            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+10 Argentina      ARG            GDP per capita … NY.GDP.PCAP.CD      NA     NA 
+# ℹ 256 more rows
+# ℹ 63 more variables: `1962` &lt;dbl&gt;, `1963` &lt;dbl&gt;, `1964` &lt;dbl&gt;, `1965` &lt;dbl&gt;,
+#   `1966` &lt;dbl&gt;, `1967` &lt;dbl&gt;, `1968` &lt;dbl&gt;, `1969` &lt;dbl&gt;, `1970` &lt;dbl&gt;,
+#   `1971` &lt;dbl&gt;, `1972` &lt;dbl&gt;, `1973` &lt;dbl&gt;, `1974` &lt;dbl&gt;, `1975` &lt;dbl&gt;,
+#   `1976` &lt;dbl&gt;, `1977` &lt;dbl&gt;, `1978` &lt;dbl&gt;, `1979` &lt;dbl&gt;, `1980` &lt;dbl&gt;,
+#   `1981` &lt;dbl&gt;, `1982` &lt;dbl&gt;, `1983` &lt;dbl&gt;, `1984` &lt;dbl&gt;, `1985` &lt;dbl&gt;,
+#   `1986` &lt;dbl&gt;, `1987` &lt;dbl&gt;, `1988` &lt;dbl&gt;, `1989` &lt;dbl&gt;, `1990` &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>That looks better! We have now read in the data set itself, skipping those rows of metadata.</p>
+<p>The resulting data set is a wide one. Each observation is a country or region. The first two columns provide information on the country. The third and fourth describe the indicator. All other columns provide each country’s GDP per capita in all years from 1960 to 2023.</p>
+<p>Now, imagine you want to compare a country’s GDP per capita across many years. For example, you want to know how Australians’ wealth has grown over time. This is very difficult to do with this current format. We would need to work with all columns from 1960 to 2023!</p>
+<p>To make these data easier to work with, we will lengthen the data set. Instead of each observation (row) describing a country, we will make each observation describe a country-year.</p>
+<p>To do this, we need to use <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code>. We need to let it know which columns we want to transpose using the <code>col</code> argument. Because the end year for these data will change each year I want to pull and clean up this data set (for example, next year the last column will be 2024, not 2023), I will use <code>!</code> to negate the columns I don’t want to transpose. This code will, therefore, work after each annual update to the data set.</p>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap</span> <span class="op">&lt;-</span> <span class="va">gdp_per_cap_raw</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">`Country Name`</span><span class="op">:</span><span class="va">`Indicator Code`</span><span class="op">)</span>,</span>
+<span>               names_to <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>               values_to <span class="op">=</span> <span class="st">"gdp_per_cap"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gdp_per_cap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 17,290 × 6
+   `Country Name` `Country Code` `Indicator Name`         `Indicator Code` year 
+   &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;                    &lt;chr&gt;            &lt;chr&gt;
+ 1 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1960 
+ 2 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1961 
+ 3 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1962 
+ 4 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1963 
+ 5 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1964 
+ 6 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1965 
+ 7 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1966 
+ 8 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1967 
+ 9 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1968 
+10 Aruba          ABW            GDP per capita (current… NY.GDP.PCAP.CD   1969 
+# ℹ 17,280 more rows
+# ℹ 1 more variable: gdp_per_cap &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>I have also told <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> what to call the column containing the previous column names (using <code>names_to</code>) and the column containing the values (using <code>values_to</code>).</p>
+<p>You might have noticed that I needed to include some back ticks when referencing those column names. This is because these column names do not follow the rules put in place to help you work with R. Column names must:</p>
+<ul>
+<li><p>Not include spaces</p></li>
+<li><p>Not start with numbers or special characters</p></li>
+</ul>
+<p>They should also be:</p>
+<ul>
+<li><p>Short</p></li>
+<li><p>Meaningful</p></li>
+<li><p>Consistently formatted</p></li>
+</ul>
+<p>The World Bank uses spaces in its column names. We need to remove those so we can more easily work with them in R. Happily, the very handy <code>janitor</code> R package is here for all of your cleaning needs!</p>
+<p>I use the <code><a href="https://sfirke.github.io/janitor/reference/clean_names.html">clean_names()</a></code> function to ensure names are clean and consistent:</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://sfirke.github.io/janitor/reference/clean_names.html">clean_names</a></span><span class="op">(</span><span class="va">gdp_per_cap</span><span class="op">)</span></span>
+<span><span class="va">gdp_per_cap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 17,290 × 6
+   country_name country_code indicator_name     indicator_code year  gdp_per_cap
+   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;              &lt;chr&gt;          &lt;chr&gt;       &lt;dbl&gt;
+ 1 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1960           NA
+ 2 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1961           NA
+ 3 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1962           NA
+ 4 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1963           NA
+ 5 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1964           NA
+ 6 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1965           NA
+ 7 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1966           NA
+ 8 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1967           NA
+ 9 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1968           NA
+10 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD 1969           NA
+# ℹ 17,280 more rows</code></pre>
+</div>
+</div>
+<p>Great! We’re almost there. Next, we need to check that R has correctly classified our data types. For example, we want to make sure that the years are coded as numbers not strings of characters.</p>
+<div class="cell">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">gdp_per_cap</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 17,290
+Columns: 6
+$ country_name   &lt;chr&gt; "Aruba", "Aruba", "Aruba", "Aruba", "Aruba", "Aruba", "…
+$ country_code   &lt;chr&gt; "ABW", "ABW", "ABW", "ABW", "ABW", "ABW", "ABW", "ABW",…
+$ indicator_name &lt;chr&gt; "GDP per capita (current US$)", "GDP per capita (curren…
+$ indicator_code &lt;chr&gt; "NY.GDP.PCAP.CD", "NY.GDP.PCAP.CD", "NY.GDP.PCAP.CD", "…
+$ year           &lt;chr&gt; "1960", "1961", "1962", "1963", "1964", "1965", "1966",…
+$ gdp_per_cap    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</code></pre>
+</div>
+</div>
+<p>Hmm, it does appear to have read the years in as characters. Why?</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">gdp_per_cap</span><span class="op">$</span><span class="va">year</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "1960"  "1961"  "1962"  "1963"  "1964"  "1965"  "1966"  "1967"  "1968" 
+[10] "1969"  "1970"  "1971"  "1972"  "1973"  "1974"  "1975"  "1976"  "1977" 
+[19] "1978"  "1979"  "1980"  "1981"  "1982"  "1983"  "1984"  "1985"  "1986" 
+[28] "1987"  "1988"  "1989"  "1990"  "1991"  "1992"  "1993"  "1994"  "1995" 
+[37] "1996"  "1997"  "1998"  "1999"  "2000"  "2001"  "2002"  "2003"  "2004" 
+[46] "2005"  "2006"  "2007"  "2008"  "2009"  "2010"  "2011"  "2012"  "2013" 
+[55] "2014"  "2015"  "2016"  "2017"  "2018"  "2019"  "2020"  "2021"  "2022" 
+[64] "2023"  "...69"</code></pre>
+</div>
+</div>
+<p>Looking at all unique values included in the <code>year</code> column, we can see the culprit: <code>"...69"</code>. It looks like the CSV includes a rouge last column with no data in it. <code><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv()</a></code> read that column in and coded all its values as <code>NA</code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="st">"...69"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">gdp_per_cap</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  gdp_per_cap
+        &lt;dbl&gt;
+1          NA</code></pre>
+</div>
+</div>
+<p>We can simply filter this out of our data set to get rid of it and convert the remaining values to numbers using <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap</span> <span class="op">&lt;-</span> <span class="va">gdp_per_cap</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">!=</span> <span class="st">"...69"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">gdp_per_cap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 17,024 × 6
+   country_name country_code indicator_name     indicator_code  year gdp_per_cap
+   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;              &lt;chr&gt;          &lt;dbl&gt;       &lt;dbl&gt;
+ 1 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1960          NA
+ 2 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1961          NA
+ 3 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1962          NA
+ 4 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1963          NA
+ 5 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1964          NA
+ 6 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1965          NA
+ 7 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1966          NA
+ 8 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1967          NA
+ 9 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1968          NA
+10 Aruba        ABW          GDP per capita (c… NY.GDP.PCAP.CD  1969          NA
+# ℹ 17,014 more rows</code></pre>
+</div>
+</div>
+<p>We now have a nice and clean data set that is easy to work with. Let’s take a look at Australia’s growth over time:</p>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gdp_per_cap</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">country_name</span> <span class="op">==</span> <span class="st">"Australia"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">gdp_per_cap</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Year"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"GDP per capita (current US$)"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">dollar</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-01-wrangling_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="widening-messy-data" class="level2"><h2 class="anchored" data-anchor-id="widening-messy-data">Widening messy data</h2>
+<p>Sometimes you want to widen your data. <code>tidyr</code> provides a similar function, <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code>, to do just this. Let’s start by getting some long data. We will again collect these data from the World Bank, but this time we will use <code>wbstats</code> to access it directly through the API.</p>
+<p>We will add to our data set information on each country’s average life expectancy (ID: SP.DYN.LE00.IN).</p>
+<div class="cell">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wbstats/man/wb_data.html">wb_data</a></span><span class="op">(</span></span>
+<span>  indicator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"SP.DYN.LE00.IN"</span>, <span class="st">"NY.GDP.PCAP.CD"</span><span class="op">)</span>,</span>
+<span>  return_wide <span class="op">=</span> <span class="cn">F</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gapminder_raw</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 27,776 × 11
+   indicator_id   indicator     iso2c iso3c country  date value unit  obs_status
+   &lt;chr&gt;          &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     
+ 1 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2023  NA   &lt;NA&gt;  &lt;NA&gt;      
+ 2 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2022  62.9 &lt;NA&gt;  &lt;NA&gt;      
+ 3 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2021  62.0 &lt;NA&gt;  &lt;NA&gt;      
+ 4 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2020  62.6 &lt;NA&gt;  &lt;NA&gt;      
+ 5 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2019  63.6 &lt;NA&gt;  &lt;NA&gt;      
+ 6 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2018  63.1 &lt;NA&gt;  &lt;NA&gt;      
+ 7 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2017  63.0 &lt;NA&gt;  &lt;NA&gt;      
+ 8 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2016  63.1 &lt;NA&gt;  &lt;NA&gt;      
+ 9 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2015  62.7 &lt;NA&gt;  &lt;NA&gt;      
+10 SP.DYN.LE00.IN Life expecta… AF    AFG   Afghan…  2014  62.5 &lt;NA&gt;  &lt;NA&gt;      
+# ℹ 27,766 more rows
+# ℹ 2 more variables: footnote &lt;chr&gt;, last_updated &lt;date&gt;</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By default, the wonderful <code><a href="https://rdrr.io/pkg/wbstats/man/wb_data.html">wb_data()</a></code> function will return data to you in a clean (and wide) format. Therefore, to illustrate how to wrangle these data, I need to include the <code>return_wide = F</code> argument.</p>
+</div>
+</div>
+<p>We now have data on each country-year-indicator. For example, let’s look at what we have for Afghanistan in 2018:</p>
+<div class="cell">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder_raw</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">country</span> <span class="op">==</span> <span class="st">"Afghanistan"</span>, <span class="va">date</span> <span class="op">==</span> <span class="fl">2018</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 11
+  indicator_id   indicator      iso2c iso3c country  date value unit  obs_status
+  &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     
+1 SP.DYN.LE00.IN Life expectan… AF    AFG   Afghan…  2018  63.1 &lt;NA&gt;  &lt;NA&gt;      
+2 NY.GDP.PCAP.CD GDP per capit… AF    AFG   Afghan…  2018 491.  &lt;NA&gt;  &lt;NA&gt;      
+# ℹ 2 more variables: footnote &lt;chr&gt;, last_updated &lt;date&gt;</code></pre>
+</div>
+</div>
+<p>This is difficult to work with. For example, think about how you would plot each country’s GDP per capita against its average life expectancy for a single year.</p>
+<p>We need to make these data wider. We want our observations to be country-year. We will therefore have a column for each country-year’s GDP per capita and its average life expectancy.</p>
+<p><code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code> works by creating a new column for each unique value in the column you tell it to draws names from (using the <code>names_from</code> argument). It will then populate that column with the corresponding value from the column you tell it to draw values from (using the <code>values_from</code> argument). It preserves all unique values in the other rows.</p>
+<p>This is a little easier to understand in practice. Let’s step through widening our Gapminder data. I’ll start by diving straight in:</p>
+<div class="cell">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span><span class="va">gapminder_raw</span>, names_from <span class="op">=</span> <span class="va">indicator_id</span>, values_from <span class="op">=</span> <span class="va">value</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 27,776 × 11
+   indicator    iso2c iso3c country  date unit  obs_status footnote last_updated
+   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;    &lt;date&gt;      
+ 1 Life expect… AF    AFG   Afghan…  2023 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 2 Life expect… AF    AFG   Afghan…  2022 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 3 Life expect… AF    AFG   Afghan…  2021 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 4 Life expect… AF    AFG   Afghan…  2020 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 5 Life expect… AF    AFG   Afghan…  2019 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 6 Life expect… AF    AFG   Afghan…  2018 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 7 Life expect… AF    AFG   Afghan…  2017 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 8 Life expect… AF    AFG   Afghan…  2016 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 9 Life expect… AF    AFG   Afghan…  2015 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+10 Life expect… AF    AFG   Afghan…  2014 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+# ℹ 27,766 more rows
+# ℹ 2 more variables: SP.DYN.LE00.IN &lt;dbl&gt;, NY.GDP.PCAP.CD &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>We now have two new columns: <code>SP.DYN.LE00.IN</code> for average life expectancy, and <code>NY.GDP.PCAP.CD</code> for GDP per capita. These columns contain the corresponding values for each country-year’s average life expectancy and GDP per capita.</p>
+<p>However, something has gone wrong. Our wider data set should have fewer rows than our longer one. This is because we are hoping to have one row for each country-year containing information on its average life expectancy and GDP per capita for each year, rather than two rows for each country-year (one for each indicator). Why is this happening?</p>
+<p>Well, the World Bank data set includes unique information about each indicator in the <code>indicator</code> column. Because this is country-year-indicator level information, <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code> - in an attempt to preserve that information - creates a country-year-indicator level data set. To tidy and widen our data set, we need to remove all country-year-indicator level information <em>and then</em> pivot it.</p>
+<div class="cell">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder</span> <span class="op">&lt;-</span> <span class="va">gapminder_raw</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">!</span><span class="va">indicator</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">indicator_id</span>, values_from <span class="op">=</span> <span class="va">value</span><span class="op">)</span></span>
+<span><span class="va">gapminder</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13,897 × 10
+   iso2c iso3c country      date unit  obs_status footnote last_updated
+   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;    &lt;date&gt;      
+ 1 AF    AFG   Afghanistan  2023 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 2 AF    AFG   Afghanistan  2022 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 3 AF    AFG   Afghanistan  2021 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 4 AF    AFG   Afghanistan  2020 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 5 AF    AFG   Afghanistan  2019 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 6 AF    AFG   Afghanistan  2018 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 7 AF    AFG   Afghanistan  2017 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 8 AF    AFG   Afghanistan  2016 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+ 9 AF    AFG   Afghanistan  2015 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+10 AF    AFG   Afghanistan  2014 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16  
+# ℹ 13,887 more rows
+# ℹ 2 more variables: SP.DYN.LE00.IN &lt;dbl&gt;, NY.GDP.PCAP.CD &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Much better! We now have a data set at the country-year level. Each country-year has information on its average life expectancy and GDP per capita.</p>
+<p>Those variable names are hard to work with and not very meaningful, so we need to clean them up:</p>
+<div class="cell">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span><span class="va">gapminder</span>, avg_life_exp <span class="op">=</span> <span class="va">SP.DYN.LE00.IN</span>, gdp_per_cap <span class="op">=</span> <span class="va">NY.GDP.PCAP.CD</span><span class="op">)</span></span>
+<span><span class="va">gapminder</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13,897 × 10
+   iso2c iso3c country  date unit  obs_status footnote last_updated avg_life_exp
+   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;    &lt;date&gt;              &lt;dbl&gt;
+ 1 AF    AFG   Afghan…  2023 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           NA  
+ 2 AF    AFG   Afghan…  2022 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           62.9
+ 3 AF    AFG   Afghan…  2021 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           62.0
+ 4 AF    AFG   Afghan…  2020 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           62.6
+ 5 AF    AFG   Afghan…  2019 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           63.6
+ 6 AF    AFG   Afghan…  2018 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           63.1
+ 7 AF    AFG   Afghan…  2017 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           63.0
+ 8 AF    AFG   Afghan…  2016 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           63.1
+ 9 AF    AFG   Afghan…  2015 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           62.7
+10 AF    AFG   Afghan…  2014 &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     2024-12-16           62.5
+# ℹ 13,887 more rows
+# ℹ 1 more variable: gdp_per_cap &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>There is also a fair bit of information in this data set that I do not need, so I will remove it and reorder the columns so they are easier to view:</p>
+<div class="cell">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">gapminder</span>, <span class="va">country</span>, <span class="va">iso3c</span>, <span class="va">date</span>, <span class="va">avg_life_exp</span>, <span class="va">gdp_per_cap</span><span class="op">)</span></span>
+<span><span class="va">gapminder</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13,897 × 5
+   country     iso3c  date avg_life_exp gdp_per_cap
+   &lt;chr&gt;       &lt;chr&gt; &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1 Afghanistan AFG    2023         NA          416.
+ 2 Afghanistan AFG    2022         62.9        357.
+ 3 Afghanistan AFG    2021         62.0        356.
+ 4 Afghanistan AFG    2020         62.6        511.
+ 5 Afghanistan AFG    2019         63.6        497.
+ 6 Afghanistan AFG    2018         63.1        491.
+ 7 Afghanistan AFG    2017         63.0        525.
+ 8 Afghanistan AFG    2016         63.1        522.
+ 9 Afghanistan AFG    2015         62.7        566.
+10 Afghanistan AFG    2014         62.5        625.
+# ℹ 13,887 more rows</code></pre>
+</div>
+</div>
+<p>We now have a nice, clean, and wide data set. You can easily look at the relationship between your two variables of interest over time:</p>
+<div class="cell">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fl">2017</span><span class="op">:</span><span class="fl">2022</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">gdp_per_cap</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">avg_life_exp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">date</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"GDP per capita (logged current US$)"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Average life expectancy"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-01-wrangling_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap()</a></code> creates a unique plot for each value in the column you specify. Here, I have used it to create six plots for each of the six years from 2017 to 2022.</p>
+</div>
+</div>
+</section><section id="exercises" class="level2"><h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<p>Name three different types of cases you can use through <code><a href="https://sfirke.github.io/janitor/reference/clean_names.html">janitor::clean_names()</a></code> to format your column names.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+HINT
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Read the argument descriptions in the <code><a href="https://sfirke.github.io/janitor/reference/clean_names.html">clean_names()</a></code> function documentation (by running <code><a href="https://sfirke.github.io/janitor/reference/clean_names.html">?clean_names</a></code> in your console.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Here is the full list:</p>
+<pre><code>c("snake", "small_camel", "big_camel",
+  "screaming_snake", "parsed", "mixed", "lower_upper", "upper_lower",
+  "swap", "all_caps", "lower_camel", "upper_camel", "internal_parsing",
+  "none", "flip", "sentence", "random", "title")</code></pre>
+<p>I like the default (snake case), but other common ones include big camel and all caps.</p>
+</div>
+</div>
+</div>
+<p>How would you lengthen the <code>gapminder</code> data set we created earlier?</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gapminder</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">avg_life_exp</span><span class="op">:</span><span class="va">gdp_per_cap</span>, names_to <span class="op">=</span> <span class="st">"indicator"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 27,794 × 5
+   country     iso3c  date indicator    value
+   &lt;chr&gt;       &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+ 1 Afghanistan AFG    2023 avg_life_exp  NA  
+ 2 Afghanistan AFG    2023 gdp_per_cap  416. 
+ 3 Afghanistan AFG    2022 avg_life_exp  62.9
+ 4 Afghanistan AFG    2022 gdp_per_cap  357. 
+ 5 Afghanistan AFG    2021 avg_life_exp  62.0
+ 6 Afghanistan AFG    2021 gdp_per_cap  356. 
+ 7 Afghanistan AFG    2020 avg_life_exp  62.6
+ 8 Afghanistan AFG    2020 gdp_per_cap  511. 
+ 9 Afghanistan AFG    2019 avg_life_exp  63.6
+10 Afghanistan AFG    2019 gdp_per_cap  497. 
+# ℹ 27,784 more rows</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Content <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2025 by <a href="https://www.harrietgoers.com">Harriet Goers</a> <br> All content licensed under a <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> <i class="fa-brands fa-creative-commons-nc" aria-label="creative-commons-nc"></i> <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-Non Commercial 4.0 International license (CC BY-NC 4.0)</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hgoers/GVPT339F/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a><br><a href="https://www.andrewheiss.com/teaching/">Heavily inspired by course websites built by Dr Andrew Heiss</a></p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

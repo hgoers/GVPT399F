@@ -11,8 +11,23 @@ execute:
   fig-width: 10
 ---
 
+## Set up
+
+To complete this session, you need to load in the following R packages:
+
+::: {.callout-tip collapse="true"}
+## Install packages
+
+To install new R packages, run the following (excluding the packages you have already installed):
+
 ```{r}
-#| echo: false
+#| eval: false
+
+install.packages("gapminder")
+```
+:::
+
+```{r}
 
 library(tidyverse)
 library(gapminder)
