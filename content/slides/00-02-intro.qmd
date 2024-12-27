@@ -1,0 +1,81 @@
+---
+title: "Welcome!"
+subtitle: "GVPT399F: Power, Politics, and Data"
+format: 
+  revealjs:
+    slide-number: true
+    preview-links: auto
+    theme: solarized
+    embed-resources: true
+execute: 
+  echo: true
+  fig-align: "center" 
+---
+
+## Welcome
+
+-   Hands-on introduction to political science data analysis
+
+-   A (re)introduce to R and statistics
+
+-   Avoid abstractions and jargon
+
+## What you will learn
+
+-   Use R to collect, clean, and analyze data
+
+-   Describe important features of your outcomes of interest and the variables you think drive changes to those outcomes
+
+-   Identify and evaluate the relationship between two variables using statistical models
+
+-   Describe those relationships using clear and precise language
+
+-   Critically evaluate empirical claims made in political news and analysis
+
+## Introduction to me
+
+-   Currently: PhD student and RAND Corporation Adjunct
+
+-   Previously: worked for the Australian government, international organizations, think tanks, and private firms
+
+-   Lots of experience using statistics to uncover the things driving outcomes of interest
+
+-   Head over to ELMs to introduce yourselves to each other!
+
+## Course structure
+
+-   Eight sessions, including this introduction and a conclusion
+
+-   Each session comprises two parts:
+
+    -   Introduction to R
+
+    -   Introduction to a statistical concept
+
+-   Read through the content, watch the videos (if included), complete the practice quizzes to test your understanding
+
+-   Run the R code yourselves as you read through the content
+
+## Assignments
+
+-   Multiple choice quiz at the end of every session except the conclusion
+
+-   You need to complete these in ELMs
+
+-   A final exam
+
+## Seeking help
+
+-   I will include links to other resources that you can use if you want further clarification
+
+-   You can ask your fellow classmates through ELMs discussion boards
+
+-   The internet is a wonderful thing
+
+-   StackOverflow is my go-to for R-related questions
+
+-   You can contact me via email
+
+::: aside
+I cannot help you with software or R-related issues. You will need to solve these yourself. R is constantly changing - being a good coder involves being good at banging your head against a wall!
+:::

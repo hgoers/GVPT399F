@@ -13,6 +13,8 @@ execute:
 
 Welcome to GVPT399F: Power, Politics, and Data. This hands-on introduction to political science data analysis will (re)introduce you to R and statistics in an accessible and engaging way. We will avoid abstractions and jargon, opting instead for a hands-on, ground-up, and simulation-focused approach to understanding how these concepts and skills work. By the end of this winter, you’ll not only gain confidence in your ability to analyze and interpret data but also build in-demand skills valued in careers across government, international organizations, think tanks, and the private sector. No prior experience in statistics or coding (and definitely no ancient Greek) is needed—just bring your curiosity!
 
+<iframe class="slide-deck" src="../content/slides/00-02-intro.html" width = "100%" height = 600px></iframe>
+
 ## What this course covers
 
 After successfully completing this course you will be able to:
@@ -42,7 +44,7 @@ You will also complete a final exam at the end of the course. All material cover
 +--------------+----------------------+-----------------+--------------------------+
 | WEEK         | ASSIGNMENT           | RELEASE DATE    | DUE DATE                 |
 +==============+======================+=================+==========================+
-| 1            | 0: Introduction quiz | 2 January 2025  | 10 January 2025, 11:59PM |
+| 1            | 0: Introduction quiz | 2 January 2025  | 7 January 2025, 11:59PM  |
 +--------------+----------------------+-----------------+--------------------------+
 | 2            | 1: Session 1 quiz    | 6 January 2025  | 10 January 2025, 11:59PM |
 |              |                      |                 |                          |
