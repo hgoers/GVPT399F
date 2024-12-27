@@ -261,6 +261,10 @@ We are going to look at the American National Election Studies pre-election surv
 
 To download the data, you will need to head over to the ANES website, download the relevant file, and save it in your RProject. The following video demonstrates how to do this.
 
+<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=8a752d3d-2ec2-4e5d-a01c-b2530117af90&amp;autoplay=false&amp;offerviewer=true&amp;showtitle=true&amp;showbrand=true&amp;captions=false&amp;start=0&amp;interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Downloading ANES">
+
+</iframe>
+
 Once you have collected the data, you can read it in using the `readr` package's `read_csv()` function. It takes the file's path as its first argument.
 
 ```{r}

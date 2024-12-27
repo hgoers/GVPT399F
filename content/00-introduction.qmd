@@ -13,7 +13,17 @@ execute:
 
 Welcome to GVPT399F: Power, Politics, and Data. This hands-on introduction to political science data analysis will (re)introduce you to R and statistics in an accessible and engaging way. We will avoid abstractions and jargon, opting instead for a hands-on, ground-up, and simulation-focused approach to understanding how these concepts and skills work. By the end of this winter, you’ll not only gain confidence in your ability to analyze and interpret data but also build in-demand skills valued in careers across government, international organizations, think tanks, and the private sector. No prior experience in statistics or coding (and definitely no ancient Greek) is needed—just bring your curiosity!
 
+::: {.panel-tabset}
+
+## Video
+
+<iframe src="https://umd.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=f40186c8-fb23-4ba2-8093-b25301137cbe&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=false&start=0&interactivity=all" height="600px" width="100%" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Introduction to the course" ></iframe>
+
+## Slides
+
 <iframe class="slide-deck" src="../content/slides/00-02-intro.html" width = "100%" height = 600px></iframe>
+
+:::
 
 ## What this course covers
 
