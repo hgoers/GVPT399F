@@ -1,0 +1,189 @@
+---
+title: "Data Merging"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+---
+
+## Set up
+
+To complete this session, you need to load in the following R packages:
+
+::: {.callout-tip collapse="true"}
+## Install packages
+
+To install new R packages, run the following (excluding the packages you have already installed):
+
+```{r}
+#| eval: false
+
+install.packages(c("tidyverse", "nycflights13"))
+```
+:::
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+## Introduction
+
+We often need to append or join multiple data sets to one another. Perhaps you got data from multiple different sources and you want to run analyses across them. Or you collected your data across different time periods and want to join them all together for your research. In this session, we will learn some helpful tools for doing this common task.
+
+Let's get started!
+
+## Keys
+
+To join multiple tables together, you need a key. These are common values across the two data sets that allow them to be connected.
+
+A **primary key** uniquely identifies each observation within your data set. For example, each airline in the `airlines` data set in the `nycflights13` R package can be identified by its two letter carrier code, which is stored in the `carrier` variable:
+
+```{r}
+airlines
+```
+
+Sometimes you need to use multiple variables to uniquely identify your observations. This is particularly common when using time-series data (for example, country-year, or leader-year). For example, observations in the `weather` data set, which provides information about the hourly weather across New York City's airports, are uniquely identified by the airport (`origin`) and time the weather was recorded (`time_hour`):
+
+```{r}
+weather
+```
+
+We can verify that each observation has a unique value as its primary key using `count()` and `filter()`:
+
+```{r}
+airlines |> 
+  count(carrier) |> 
+  filter(n > 1)
+
+weather |> 
+  count(time_hour, origin) |> 
+  filter(n > 1)
+```
+
+If you know that each row of your data set is a unique observation, you can create your own primary key using its row number:
+
+```{r}
+
+airlines |> 
+  mutate(id = row_number(), .before = 1)
+```
+
+::: callout-tip
+By default, if you create a new column using `mutate()` that column will be placed at the end of the tibble. We can use the `.before` argument to control where the new column goes. Here I have asked `mutate()` to place it before the first column (making it the first column).
+:::
+
+## Basic joins
+
+Primary keys serve as your connection to **foreign keys**, which are the variables that allow you to uniquely identify observations within the data set you want to join to your original data set. For example, `flights$carrier` is a foreign key that connects to the primary key `airlines$carrier`.
+
+You can join data sets using their primary and foreign keys using one of six join functions provided in the `dplyr` R package (which is loaded in with `tidyverse`). These are: `left_join()`, `inner_join()`, `right_join()`, `full_join()`, `semi_join()`, and `anti_join()`. All of these functions take two data frames (which I will refer to as `primary` and `foreign`) and return a data frame.
+
+### Mutating joins
+
+Mutating joins create new columns by appending information in `foreign` to `primary` according to the key and join function you use. There are four mutating join functions: `left_join()`, `right_join()`, `inner_join()`, and `full_join()`.
+
+`left_join()` matches observations in `primary` and `foreign` by their keys, then copies all other variables in `foreign` to `primary`. The resulting data frame will always have the same number of rows as `primary`. For example, let's join `flights` (which provides information on all flights that departed NYC airports in 2013) with `airlines`:
+
+```{r}
+flights |> 
+  left_join(airlines)
+```
+
+When you run this in RStudio you will see the following message printed in your console:
+
+```         
+Joining with `by = join_by(carrier)`
+```
+
+This is letting you know the key `left_join()` used to match observations in `flights` with those in `airlines`. It guessed correctly: we wanted to match these data sets by airline. However, we should not rely on R to guess correctly every time. This can lead to incorrect matches, which can mess up your analysis down the line. Instead, you should always specify the key yourself using the `by` argument.
+
+```{r}
+flights |> 
+  left_join(airlines, by = join_by(carrier))
+```
+
+Here is a visualization of these joins:
+
+![Source: R4DS](img/match-types.png){fig-align="center"}
+
+If `left_join()` cannot find a match for a primary key it will fill the values in the new columns created by copying `foreign` over with `NA`. For example,
+
+```{r}
+flights |> 
+  left_join(planes, by = join_by(tailnum, year)) |> 
+  filter(tailnum == "N3ALAA") |> 
+  select(tailnum, year, flight, origin, type:engine)
+```
+
+`inner_join()`, `right_join()`, and `full_join()` all work similarly to `left_join()`. They differ on which rows they keep. `left_join()` kept the rows in `primary` (the first, or left-most data frame). `right_join()` keeps the rows in `foreign` (the second, or right-most data frame). For example:
+
+```{r}
+airports |> 
+  right_join(weather, by = join_by(faa == origin))
+```
+
+::: callout-tip
+The column containing the airport code was called `faa` in the `airports` data frame and `origin` in the `weather` data frame. We can tell the `*_join()` functions that these are the keys using the `by` argument as formatted above.
+:::
+
+`full_join()` keeps all rows in both `primary` and `foreign`. `inner_join()`, on the other hand, only keeps those rows that can be matched between `primary` and `foreign`.
+
+### Filtering joins
+
+Filtering joins filter rows! There are two types of these join: semi- and anti-joins.
+
+`semi_join()` keeps all the rows in `primary` that have a match in `foreign`. For example, the `airports` data set contains information on all airports in the US, but the `flights` data set only includes information on NYC airports. We can filter the `airports` data set to only include information on airports included in our `foreign` data frame (`flights`) using `semi_join()`:
+
+```{r}
+airports |> 
+  semi_join(flights, by = join_by(faa == origin))
+```
+
+Here is a visualization of this filtering process:
+
+![Source: R4DS](img/semi.png){fig-align="center"}
+
+`anti_join()`, on the other hand, returns only the rows that do not have a match in `foreign`. For example, the following will return all airports except those included in the `flights` data frame:
+
+```{r}
+airports |> 
+  anti_join(flights, by = join_by(faa == origin))
+```
+
+Here is a visualization of what is going on with `anti_join()`:
+
+![Source: R4DS](img/anti.png){fig-align="center"}
+
+## Cross joins
+
+Another common joining task includes finding all combinations of variables. For example, I often need to build data sets that include information on all countries across some number of years. I like to create this "spine" independently of my data collection to make sure I am covering all country-years I expect to cover and not relying on my data source.
+
+For example, I may want to look at delays across all airports in the US in the years 2018-2024. To build my spine, I would start with a list of all airports:
+
+```{r}
+airports
+```
+
+Now, I want to create new rows for each airport and year between 2018 and 2024. For example, I want seven rows for Lansdowne Airport (Lansdowne Airport in 2018, Lansdowne Airport in 2019, etc.). To do this, I can use `cross_join()` to join `airports` to a new data frame I create with a row for each year in my scope:
+
+```{r}
+airports |> 
+  cross_join(tibble(year = 2018:2024)) |> 
+  relocate(year)
+```
+
+If you have two vectors (not great, big data frames) that you want to find all combinations for, you can use `crossing()`:
+
+```{r}
+crossing(year = 2018:2024, faa = unique(airports$faa))
+```
+
+::: callout-note
+I will use `crossing()` to help build a 3D plot in the next part of this session: *Estimating Causal Effects with Observational Data*.
+:::

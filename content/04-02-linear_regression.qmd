@@ -18,13 +18,17 @@ bibliography: references.bib
 set.seed(1234)
 ```
 
-Generally, we - political scientists - want to understand what factors shape important political outcomes. We can use empirical research to help build and bolster this understanding. Many of the questions we ask cannot be answered using experiments. We are left, instead, to look back at the history of our outcome of interest (for example, global conflicts, democratic backsliding, elections), and attempt to tease out the role various factors played in shaping those outcomes. This section focuses on developing your ability to do this.
+We want to understand what factors make certain outcomes more likely to occur. What makes an individual more likely to vote in an election? What makes a country on the brink of democracy more likely to slide back into authoritarianism? What makes war between two countries more likely to break out?
+
+We can use empirical research to help us discover what characteristics or features of our political actors or the environment in which they operate make these outcomes more likely to occur. Does election day registration increase the likelihood an individual will vote in an election? Does a free press make democratic backsliding less likely to occur? Do trade links reduce the likelihood two countries go to war with one another?
+
+Many of the questions we ask cannot be answered using experiments. We are left, instead, to look back at the history of our outcome of interest (for example, global conflicts, democratic backsliding, elections), and attempt to tease out the role various factors played in shaping those outcomes. This section focuses on developing your ability to do this.
 
 ## Set up
 
 To complete this session, you need to load in the following R packages:
 
-::: {.callout-tip collapse="true"}
+::: callout-tip
 ## Install packages
 
 To install new R packages, run the following (excluding the packages you have already installed):
@@ -34,7 +38,23 @@ To install new R packages, run the following (excluding the packages you have al
 
 install.packages(c("marginaleffects", "janitor", "ggdist"))
 ```
+
+You will also need to install an R package I built: `polisciols`. This package contains data published by some wonderful political scientists. You can read more about it in the [package documentation](https://github.com/hgoers/polisciols).
+
+This package is not published on CRAN[^1], so you will need to install it using the following code:
+
+```{r}
+#| eval: false
+
+install.packages("devtools")
+
+devtools::install_github("hgoers/polisciols")
+```
+
+Remember, you only need to do this once on your computer. Run this in the console.
 :::
+
+[^1]: The [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/) hosts all R packages that can be installed easily using the familiar [`install.packages()`](https://rdrr.io/r/utils/install.packages.html) function. These packages have gone through a comprehensive quality assurance process. I wrote `polisciols` for this class and update it regularly. I, therefore, will not host it through CRAN: the quality assurance process takes too long to be practical for our schedule. Instead, you are downloading it directly from its Github repository.
 
 ```{r}
 library(tidyverse)
@@ -46,19 +66,17 @@ library(ggdist)
 library(polisciols)
 ```
 
-## Introduction
-
-Specifically, this section develops your ability to estimate average treatment effects using observational data.
-
 ## The economic benefits of justice
 
 @appel2012 (two wonderful UMD alumni) explore the determinants of foreign direct investment (FDI) flows into and out of post-conflict states. States that are emerging from civil war often have an acute need for foreign and stable sources of capital. However, multinational corporations and other foreign commercial actors are likely to view post-conflict states as high risk countries in which to invest: the risk of a return to violence and instability is often high in the immediate aftermath of a civil war. Understanding this, leaders of post-conflict states often attempt to decrease this perceived risk.
 
 Appel and Loyle argue that leaders can successfully do this by establishing post-conflict justice (PCJ) institutions. These institutions impose both domestic and reputational costs on post-conflict leaders. These costs allow leaders to signal their commitment to minimizing the risk of a return to violence and instability to foreign commercial actors. This is a great paper and I highly encourage you to take a look at [their argument](https://journals.sagepub.com/doi/10.1177/0022343312450044) in detail.
 
-Their argument focuses on leaders' attempts to change foreign commercial actors' perceptions of the risk of a return to violence. We cannot directly observe these commercial actors' perceptions. However, we can observe the outcome of these perceptions: investment. If Appel and Loyle's argument is correct, we should observe higher levels of FDI investment coming into post-conflict states that establish PCJ institutions compared to those that do not, on average and holding all else constant.
+Their argument focuses on leaders' attempts to change foreign commercial actors' perceptions of the risk of a return to violence. We cannot directly observe these commercial actors' perceptions. However, we can observe the outcome of these perceptions: investment. Firms that have the means and desire to invest in a post-conflict country will make an assessment of the risk to their investment before committing the capital required to set up shop. If they believe the country is highly likely to return to conflict, they will not invest in it. If, on the other hand, they believe the risk of recidivism is low, they will invest.
 
-Appel and Loyle find strong evidence of this. We will replicate and modify this empirical work. In doing so, we will become more familiar with the underlying mechanics of multiple linear regression and strengthen our ability to interpret these models.
+If Appel and Loyle's argument is correct, we should observe higher levels of FDI investment coming into post-conflict states that establish PCJ institutions compared to those that do not. PCJ institutions reduce the risk of a return to violence, which should - in turn - reduce firms' beliefs about this risk. Firms invest when they believe the risk of a return to conflict to be low.
+
+Appel and Loyle find strong evidence of this occuring. We will replicate and modify this empirical work. In doing so, we will become more familiar with the underlying mechanics of linear regression and strengthen our ability to interpret these models.
 
 Let's get started!
 
@@ -74,7 +92,7 @@ head(ebj)
 
 They focus on the 10-year period immediately following the conflict's conclusion. This is the period in which we would expect foreign commercial actors to perceive the risk of a return to violence and instability to be greatest and, therefore, the period in which leaders' attempts to quash these perceptions to be most relevant.
 
-Therefore, each row in this data set represents a single post-conflict state. The data is generally a summary of the 10-years post-conflict. For example `net_fdi_inflows` provides us with the total net FDI inflows each post-conflict state received in that 10-year period.
+Each row in this data set represents a single post-conflict state. The data provided are a summary of the 10-years post-conflict. For example, `net_fdi_inflows` provides us with the total net FDI inflows (dollar amount invested in the country minus the dollar amount divested from the country) each post-conflict state received across the whole 10-year period.
 
 ::: callout-tip
 You can learn more about each variable using the following command:
@@ -95,26 +113,38 @@ summary(ebj$net_fdi_inflows)
 ggplot(ebj, aes(x = net_fdi_inflows)) + 
   geom_histogram() + 
   theme_minimal() + 
+  labs(x = "Net FDI inflows",
+       y = "Count") + 
   scale_x_continuous(labels = scales::dollar)
 ```
 
-There appears to be a clear outlier: a net FDI inflow of `r ebj |> slice_max(net_fdi_inflows) |> pull(net_fdi_inflows) |> scales::dollar()` million for `r ebj |> slice_max(net_fdi_inflows) |> pull(country_name)`. You can see that this is pulling up the average net FDI inflows well above the median inflow across our group of post-conflict states. We will keep this in because this is not the focus of this session, but I would encourage you to explore whether these findings are sensitive to its inclusion.
+On average, post-conflict countries received `r scales::dollar(summary(ebj$net_fdi_inflows)[[4]])` million in net FDI inflow. So, countries in our sample tended to receive more investment than they lost in the 10-year period following the end of their conflict.
 
-We learn from this that some states have greater FDI outflows than inflows (resulting in negative net FDI inflows). `r ebj |> slice_min(net_fdi_inflows) |> pull(country_name)` had the greatest negative inflow, with net inflows of `r ebj |> slice_min(net_fdi_inflows) |> pull(net_fdi_inflows) |> scales::dollar()` million.
+Looking at the histogram above we can see that this average is not a particularly good summary of our data: the majority of countries received a smaller amount of net FDI inflows. The peak the distribution is sitting closer to \$0. Looking at the five number summary printed above the histogram we can see that 50 percent of the countries in our sample received between `r scales::dollar(summary(ebj$net_fdi_inflows)[[2]])` and `r scales::dollar(summary(ebj$net_fdi_inflows)[[5]])` million in net inflows.
 
-Other states received greater foreign investments than they invested elsewhere, resulting in positive net FDI inflows. In fact, on average, post-conflict states received more inflows than outflows.
+::: callout-note
+The middle 50 percent of a vector of numbers sits between the **first quartile** (below which 25 percent of those numbers fall) and the **third quartile** (below which 75 percent of those numbers fall). To illustrate, consider the following:
+
+```{r}
+x <- seq(0, 100)
+
+summary(x)
+```
+:::
+
+Why is our average sitting so far above where the majority of the countries' net FDI inflows fell? There appears to be a clear **outlier** in our data: Russia received a net FDI inflow of `r ebj |> slice_max(net_fdi_inflows) |> pull(net_fdi_inflows) |> scales::dollar()` million in the 10 years following the end of the First Chechen War in 1997. You can see that this is pulling the average net FDI inflows up well above the median inflow across our group of post-conflict states. Keep this in mind, because we will return to it later in the course.
 
 ## PCJ institutions
 
-Appel and Loyle focus on whether states that have PCJ institutions successfully attract greater net FDI inflows than those that do not. Therefore, their main explanatory variable is the existance of PCJ institutions.
+Appel and Loyle ask whether states that have PCJ institutions successfully attract greater net FDI inflows than those that do not. Therefore, their main explanatory variable is the existence of PCJ institutions.
 
-This variable, `pcj`, indicates whether the the state established a PCJ institution within five years following the end of the conflict. What proportion of states did this?
+In their dataset the variable `pcj` indicates whether the the state established a PCJ institution within five years following the end of the conflict. What proportion of states did this?
 
 ```{r}
 tabyl(ebj, pcj)
 ```
 
-The majority of post-conflict states did not have PCJ institutions.
+The majority of post-conflict states did not establish any PCJ institutions in the five years proceeding the end of their conflicts.
 
 ## Relationship between PCJ institutions and net FDI inflows
 
@@ -126,17 +156,27 @@ ebj |>
   summarise(avg_net_fdi = mean(net_fdi_inflows))
 ```
 
-Yes! States that established a PCJ institution received higher net FDI inflows, on average, than those states that did not. This difference looks large! It's `r ebj |> group_by(pcj) |> summarise(avg_net_fdi = mean(net_fdi_inflows)) |> mutate(diff = avg_net_fdi - lag(avg_net_fdi)) |> drop_na() |> pull(diff) |> scales::dollar()` million in net inflows!
+Yes! On average, states that established a PCJ institution received higher net FDI inflows than those states that did not. This difference looks large. It's `r ebj |> group_by(pcj) |> summarise(avg_net_fdi = mean(net_fdi_inflows)) |> mutate(diff = avg_net_fdi - lag(avg_net_fdi)) |> drop_na() |> pull(diff) |> scales::dollar()` million in net inflows.
 
-But what are the chances this difference is simply the product of chance? We can formally test this question using linear regression:
+Ready for something very cool? At the end of the day, OLS regression is just fancy averaging. Let's fit a linear regression model to these data and look at the results:
 
 ```{r}
 m <- lm(net_fdi_inflows ~ pcj, data = ebj)
 
-modelsummary(m, 
-             coef_rename = c("pcjPCJ institutions" = "PCJ institutions established"),
-             stars = T)
+modelsummary(m,  
+             statistic = NULL, 
+             coef_rename = c("pcjPCJ institutions" = "PCJ institutions established"))
 ```
+
+We get the same numbers as above! Take a minute to interpret the intercept and coefficient estimate yourself. Can you see the connection to our simple grouped averages above?   
+
+::: {.callout-note collapse="true"}
+## Check your answer 
+
+The intercept is the predicted value of our outcome variable when all independent variables are equal to zero. Here, we have one independent variable which is equal to zero when the country did not establish PCJ institutions. Our model predicts that post-conflict countries without PCJ institutions will have the net FDI inflow that post-conflict countries in our sample without PCJ institutions had on average. 
+
+The coefficient estimate is the predicted average difference in the outcome following a one-unit change in the independent variable. Here, a one-unit change in our independent variable is a move from no PCJ institutions (where `pcj = 0`) to at least one PCJ institution (where `pcj = 1`). Our model predicts that post-conflict countries with PCJ institutions will have on average `r ebj |> group_by(pcj) |> summarise(avg_net_fdi = mean(net_fdi_inflows)) |> mutate(diff = avg_net_fdi - lag(avg_net_fdi)) |> drop_na() |> pull(diff) |> scales::dollar()` million more in net FDI inflows because this is the difference between the average net inflows of countries in our sample without PCJ institutions and those with them.
+:::
 
 According to this model, what is the average predicted net FDI inflows for countries that did not establish PCJ institution?
 
@@ -170,22 +210,17 @@ $$
 
 ### Substantive significance
 
-This finding is substantively significant. These countries are recovering from conflict: their economies are really weak. Leaders are often very keen to find stable and reliable sources of funding to promote and strengthen their battered economies. This average difference of `r tidy(m) |> filter(term == "pcjPCJ institutions") |> pull(estimate) |> scales::dollar()` million is; therefore, likely to incentivize this policy.
+So, we found support for Appel and Loyal's hypothesis: countries that established PCJ institutions within the first five-years after conflict received more net FDI inflows than those that did not establish these institutions. But, was this difference large? These institutions impose real costs on post-conflict leaders. Is the predicted boost in net FDI inflows generally worth this cost? More generally, is this difference **substantively significant**?
 
-Further, if we look at the range of plausible values of the coefficient on the existence of a PCJ institution (i.e. the confidence interval) we can see states that did not establish a commission plausibly receive no net FDI inflows in this post-conflict period. In fact, it is plausible that investment leaves their economies: this net inflow can be negative. On the other hand, states that do establish a commission enjoy, on average, billions in net FDI inflows. For an economy struggling to establish indigenous production in a post-conflict setting, this can be critical to their long-term economic development. Again, this is further proof of the substantive significance of this relationship.
+:::{.callout-note}
+Substantive significance is different from **statistical significance**, which we will discuss in detail in our last session. Here, we are interested in whether the difference is large enough for our political actors to care about it. 
 
-::: callout-tip
-Visualizing the full range of plausible coefficients can be a great way to communicate your findings:
+To illustrate, imagine if I told you that studying this course material for an additional five hours would lead to a one-point increase in your quiz mark. I'm not sure many of you would put in that additional work for such a small reward. If, on the other hand, I told you that it would boost your mark by 15 points, you might be more willing to spend your afternoon with these materials. 
 
-```{r}
-plot_predictions(m, condition = "pcj") + 
-  geom_hline(yintercept = 0, colour = "grey") + 
-  labs(x = NULL,
-       y = "Net FDI inflows (USD million)") + 
-  scale_y_continuous(labels = scales::dollar) + 
-  theme_minimal()
-```
+There is no one right or wrong answer to the question of substantive significance. For example, perhaps someone who is one point away from a perfect grade would be willing to put in the extra hours to secure that one additional mark. Substantive significance rests much more on your argument for it, rather than a hard-and-fast threshold that must be reached (which is the case for statistical significance). 
 :::
+
+I argue that this finding is substantively significant. These countries are recovering from conflict: their economies are generally very weak. Leaders are often very keen to find stable and reliable sources of funding to promote and strengthen their battered economies. This average difference of `r tidy(m) |> filter(term == "pcjPCJ institutions") |> pull(estimate) |> scales::dollar()` million is; therefore, likely to incentivize this policy.
 
 ## But what about other factors that shape net FDI inflows?
 
@@ -201,18 +236,110 @@ Therefore, I hypothesize that the greater a state's GDP per capita, the larger i
 m <- lm(net_fdi_inflows ~ pcj + gdp_per_capita, data = ebj)
 
 modelsummary(m, 
+             statistic = NULL, 
              coef_rename = c("pcjPCJ institutions" = "PCJ institutions established",
-                             "gdp_per_capita" = "GDP per capita (current USD)"),
-             stars = T)
+                             "gdp_per_capita" = "GDP per capita (current USD)"))
 ```
 
-We continue to find a positive and statistically significant relationship between net FDI inflows and the establishment of a PCJ institution. This model also accounts for the association between the state's GDP per capita and those inflows.
+We continue to find a positive relationship between net FDI inflows and the establishment of a PCJ institution. In other words, countries that established PCJ institutions received, on average, larger net FDI inflows than those that did not establish these institutions. Additionally, we can now state that this is the case regardless of how rich or poor individuals within the country are. 
 
-The intercept here is not informative on its own. It tells us the estimated average net FDI inflows for states that do not have PCJ institutions and in which citizens had a GDP per capita of \$0. Although the majority of states did not establish an institution, there are no states in the world that have a GDP per capita of \$0.
+We do this by holding constant the other variables in the model. This can be a little tricky to wrap your head around, so please be patient with yourselves. When we introduce multiple variables into our linear regression models we move from a *line* of best fit to a *plane* of best fit. You add an additional dimension to your plane for each additional variable you include in your model. To illustrate, look at the model we just fit (which has two variables) plotted against the observed values for whether the country had a PCJ institution, its GDP per capita, and the net FDI inflow it received: 
 
-Let's instead focus on the other coefficients. We find that states that established a PCJ institution received, on average, net FDI inflows of `r tidy(m) |> filter(term == "pcjPCJ institutions") |> pull(estimate) |> scales::dollar()` million more than states that did not in the 10-year period after conflict. This is a slightly smaller estimated difference than we found in the model that did not account for individuals' average wealth, but it remains large.
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| fig-height: 8
 
-We also find that an increase in the GDP per capita of a state of \$1,000 is associated with an increase of `r scales::dollar((tidy(m) |> filter(term == "gdp_per_capita") |> pull(estimate))*1000)` million in net FDI inflow. This is consistent with our expectations that, holding all else constant, a country with a richer population is a more attractive investment destination than a country that has poorer citizens.
+# You can produce interactive graphs in R using `plotly`. This is a bit beyond 
+# the R code you have been introduced to thus far, but if you are interested in 
+# learning more check out the `plotly` documentation.
+
+library(plotly)
+
+# Get all plotted points for PCJ
+points_pcj <- ebj |> 
+  distinct(pcj) |>
+  pull()
+
+# Get all plotted points for GDP per capita
+points_gdp <- seq(min(ebj$gdp_per_capita, na.rm = T),
+                  max(ebj$gdp_per_capita, na.rm = T),
+                  by = 1)
+
+# Get the predicted values for net FDI inflows from the model
+new_df <- crossing(
+  gdp_per_capita = points_gdp,
+  pcj = points_pcj
+)
+
+pred_values <- augment(m, newdata = new_df) |> 
+  pull(.fitted)
+
+pred_values_matrix <- matrix(pred_values, nrow = length(points_pcj), ncol = length(points_gdp))
+
+# Plot the plane
+plot_ly() |> 
+  add_surface(x = points_gdp, 
+              y = points_pcj,
+              z = pred_values_matrix,
+              colors = "pink") |> 
+  add_markers(x = ebj$gdp_per_capita, 
+              y = ebj$pcj,
+              z = ebj$net_fdi_inflows,
+              type = "scatter3d",
+              alpha = 0.75) |> 
+  layout(showlegend = FALSE)
+```
+
+::: {.callout-note}
+This graph is interactive. Have a play around with it. 
+:::
+
+Our model is no longer the line of best fit. It is now the linear plane of best fit. For any given value of GDP per capita and whether the country has PCJ institutions or not, we have a predicted value of net FDI inflows. This predicted value is the value that minimizes the distance between itself and all the values of both GDP per capita and whether the country has a PCJ institution or not. 
+
+### Interpreting multiple linear regression models
+
+The intercept here is not informative on its own. It tells us the estimated average net FDI inflows for countries that do not have PCJ institutions (`pcj = 0`) and in which citizens had a GDP per capita of \$0 (`gdp_per_capita = 0`). Although the majority of countries did not establish a PCJ institution, there are no countries in the world that have a GDP per capita of \$0.
+
+Let's instead focus on the other coefficients. We find that states that established a PCJ institution received, on average, net FDI inflows of `r tidy(m) |> filter(term == "pcjPCJ institutions") |> pull(estimate) |> scales::dollar()` million more than states that did not, *holding that country's GDP per capita constant*. I have picked one value of GDP per capita and then calculated the difference between the predicted value of net FDI inflows for a countries with that GDP per capita and without PCJ institutions compared to that for a country with that GDP per capita and with PCJ institutions. The value of GDP per capita that you pick does not matter because this is a linear plane. 
+
+::: {.callout-note}
+To illustrate, say I pick a GDP per capita of \$0. The predicted net FDI inflow for a country without a PCJ institution is therefore: 
+
+$$
+Net\ inflow = -319 + \beta_{PCJ}(0) + \beta_{GDP\ per\ cap}(0) \\
+Net\ inflow = -319 + 1673(0) + 0.318(0) \\
+Net\ inflow = -319
+$$
+
+The predicted net FDI inflow for a country with a PCJ institution (and a GDP per capita of \$0) is: 
+
+$$
+Net\ inflow = -319 + \beta_{PCJ}(1) + \beta_{GDP\ per\ cap}(0) \\
+Net\ inflow = -319 + 1673(1) + 0.318(0)
+Net\ inflow = 1354
+$$
+
+The difference is $1673 (the coefficient for the PCJ variable).
+
+I can do the same calculations for a country with a GDP per capita of \$25,000. Here is the predicted net FDI inflow for a country without PCJ institutions: 
+
+$$
+Net\ inflow = -319 + 1673(0) + 0.318(25000) \\
+Net\ inflow = 7631
+$$
+
+And for a country with PCJ institutions: 
+
+$$
+Net\ inflow = -319 + 1673(1) + 0.318(25000) \\
+Net\ inflow = 9304
+$$
+
+Again, the difference is $1673 (the coefficient for the PCJ variable).
+:::
+
+We also find that an increase in the GDP per capita of a state of \$1,000 is associated with an increase of `r scales::dollar((tidy(m) |> filter(term == "gdp_per_capita") |> pull(estimate))*1000)` million in net FDI inflow, on average and holding whether they have PCJ institutions constant. This is consistent with our expectations that, holding all else constant, a country with a richer population is a more attractive investment destination than a country that has poorer citizens.
 
 ### Using this richer model
 
@@ -223,13 +350,19 @@ As usual, one of the easiest ways to communicate this is through a visualization
 ```{r}
 plot_predictions(m, condition = c("gdp_per_capita", "pcj")) + 
   labs(x = "GDP per capita (USD)",
-       y = "Net FDI inflows (USD million)") + 
+       y = "Net FDI inflows (USD million)",
+       color = "PCJ",
+       fill = "PCJ") + 
   scale_y_continuous(labels = scales::dollar) + 
   scale_x_continuous(labels = scales::dollar) + 
   theme_minimal()
 ```
 
-We can see the positive relationship between GDP per capita and net FDI inflows *and* that across any given value of GDP per capita states that have established a PCJ institution start and stay at a higher predicted inflow compared to those that did not.
+We can see that countries with PCJ institutions (represented by the blue line) are predicted to have more net FDI inflows than countries without these institutions (represented by the red line) across all values of GDP per capita. Because the model is linear, the distance between the red and blue lines is constant across all values of GDP per capita. 
+
+:::{.callout-note}
+The coloured bands around the line showing the predicted values of net FDI inflows are the **confidence intervals**. We will discuss these more in later sessions.  
+:::
 
 ### The full model
 
@@ -245,6 +378,7 @@ m <- lm(net_fdi_inflows ~ pcj + gdp_per_capita + gdp + gdp_per_capita_growth +
         data = ebj)
 
 modelsummary(m, 
+             statistic = NULL, 
              coef_rename = c("pcjPCJ institutions" = "PCJ institutions established",
                              "gdp_per_capita" = "GDP per capita (current USD)",
                              "gdp" = "GDP (current USD)",
@@ -259,11 +393,10 @@ modelsummary(m,
                              "conflict_duration" = "Conflict duration (years)",
                              "peace_agreementPeace agreement" = "Peace agreement",
                              "victoryVictory" = "Decisive victory",
-                             "cold_warCold War" = "Cold War"),
-             stars = T)
+                             "cold_warCold War" = "Cold War"))
 ```
 
-Even when we account for all the political, economic, and conflict-related factors that the literature previously identified to be important, we still find that the existence of PCJ institution substantively and statistically significantly shapes the net FDI inflows of post-conflict states.
+Even when we account for all the political, economic, and conflict-related factors that the literature previously identified to be important, we still find that the existence of PCJ institution shapes the net FDI inflows of post-conflict states.
 
 ## Including categorical variables with multiple categories
 
@@ -311,7 +444,7 @@ We often say that the intercept coefficient represents the predicted average val
 
 Our model suggests that autocracies (`regime_type = "Autocracy"`) that have not established a commission (`pcj = "No institutions"`) have a predicted average net FDI inflow of `r tidy(m) |> filter(term == "(Intercept)") |> pull(estimate) |> scales::dollar()` million.
 
-The coefficients on democracies and hybrid regimes need to be interpreted in relation to autocracies (their baseline category). From our model, we can see that the coefficient for democracies is negative and the coefficient for hybrid regimes is positive. That means that, on average, democracies tend to receive less net FDI inflows than autocracies and hybrid regimes tend to receive more net FDI inflows than autocracies.
+The coefficients on democracies and hybrid regimes need to be interpreted in relation to autocracies (their baseline category). From our model, we can see that the coefficient for democracies is negative and the coefficient for hybrid regimes is positive. That means that, on average, democracies tend to receive less net FDI inflows than autocracies and hybrid regimes tend to receive more net FDI inflows than autocracies, holding all else constant.
 
 ### Predictions with multiple categorical variables
 

@@ -1,0 +1,213 @@
+---
+title: "Data Programming"
+format:
+  html:
+    code-link: true
+toc-depth: 4
+execute: 
+  warning: false
+  message: false
+  echo: true 
+  fig-width: 10
+---
+
+## Set up
+
+To complete this session, you need to load in the following R packages:
+
+::: {.callout-tip collapse="true"}
+## Install packages
+
+To install new R packages, run the following (excluding the packages you have already installed):
+
+```{r}
+#| eval: false
+
+install.packages(c("tidyverse", "nycflights13"))
+```
+:::
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+## Introduction
+
+You have been introduced to a number of R functions that have been wonderfully helpful in allowing you to write concise code. However, you may sometimes find yourself wanting a new function that doesn't yet exist. It may be because you have to repeat a task very specific to your work, or because no one else has taken the time to write a function that solves a common problem.
+
+This session, I will introduce programming in R to you. You will be able to write your own R functions that will help keep your code concise and robust. I will also point you towards some resources that will help you write your own R package so you can share your code with others.
+
+Let's get started!
+
+## A common problem
+
+Good R code is concise and robust. But sometimes we need to perform the same task across many different data frames or numbers.
+
+For example, let's return to our data on the weather at NYC airports:
+
+```{r}
+weather
+```
+
+This data frame includes information about the temperature at each airport. It is recorded in degrees Fahrenheit. I - as an Australian - don't know what to do with these huge numbers! I need to convert them to the much more sensible degrees Celsius so I can understand them better. The conversion from Fahrenheit to Celsius is done according to this formula:
+
+$$
+C = \frac{F - 32}{\frac{9}{5}}
+$$
+
+So, to convert each temperature data point from F to C, I could do the following:
+
+```{r}
+transmute(weather, origin, time_hour, temp_f = temp, temp_c = (temp - 32) / (9/5))
+```
+
+::: callout-tip
+`transmute()` combines `mutate()` and `select()`. It's very handy!
+:::
+
+Alternatively, I could write a function that includes that formula and then apply that function to my vector of temperature values.
+
+```{r}
+f_to_c <- function(f) {
+  
+  c <- (f - 32) / (9/5)
+  
+  return(c)
+  
+}
+```
+
+Let's try our new function out:
+
+```{r}
+f_to_c(32)
+
+f_to_c(100)
+
+f_to_c(50)
+```
+
+Looking good! Now, let's apply it to our data:
+
+```{r}
+transmute(weather, origin, time_hour, temp_f = temp, temp_c = f_to_c(temp))
+```
+
+## How to write a function
+
+The function we wrote above has three important parts:
+
+1.  A **name**: `f_to_c`. Names should be informative and easy to type.
+2.  **Arguments**: `f`. Arguments are the variables the user will supply to the function. Here, we allow the user to supply a temperature in Fahrenheit.
+3.  A **body**. This includes the code that will run when the function is called.
+
+You create a function by following the template:
+
+```{r}
+name <- function(arguments) {
+  body
+}
+```
+
+## A more robust function
+
+It would be nice if we could allow the user to provide temperatures in either Fahrenheit or Celsius. Let's create a more complex but useful function:
+
+```{r}
+convert_temp <- function(temp, type = c("F", "C")) {
+  
+  if (type == "F") {
+    
+    t <- (temp - 32) / (9/5)
+    
+  } else {
+    
+    t <- (9/5)*temp + 32
+    
+  }
+  
+  return(t)
+  
+}
+```
+
+Let's try this out:
+
+```{r}
+convert_temp(0, "C")
+
+convert_temp(32, "F")
+
+convert_temp(50, "C")
+
+convert_temp(122, "F")
+```
+
+Looks like it is working!
+
+We have included some restrictions on our arguments: users can only supply one of two values: "C" or "F". However, we have not written very robust code yet. Let's see what happens when we include something other than "F" or "C" as the `type` argument:
+
+```{r}
+convert_temp(0, "Z")
+
+convert_temp(50, "bloop")
+
+convert_temp(100, "bleep")
+```
+
+Huh... it appears that our function is accepting those values as "C". That's because we allowed anything other than "F" to be treated as "C". Let's fix that:
+
+```{r}
+
+convert_temp <- function(temp, type = c("F", "C")) {
+  
+  if (type == "F") {
+    
+    t <- (temp - 32) / (9/5)
+    
+  } else if (type == "C") {
+    
+    t <- (9/5)*temp + 32
+    
+  } else {
+    
+    stop("You need to provide either 'F' or 'C' in the 'type' argument.")
+    
+  }
+  
+  return(t)
+  
+}
+```
+
+First, let's check that it still works as expected:
+
+```{r}
+convert_temp(0, "C")
+
+convert_temp(32, "F")
+```
+
+And then let's check what happens when we supply a different value for `type`:
+
+```{r}
+#| eval: false
+convert_temp(0, "bleep")
+```
+
+![](img/error.png){fig-align="left"}
+
+Great! Not only does the function refuse to provide any output, it also gives the user a helpful error message.
+
+## R packages
+
+You can create functions that perform all kinds of very complex tasks. For example, you can write a function that takes entire data frames, fits models against those data frames, and provides summary statistics and various plots of those models. These more complex functions follow the same format introduced to you above. As you build your R skills, you will find more opportunities to write increasingly complex and robust functions.
+
+You should not keep those functions to yourself! You should share them with others, who may also be struggling with verbose code. If you have a group of functions that perform similar tasks, you should write them up into an R package. For example, you might want to write a series of functions that perform common conversions. You can add a weight converter to the temperature converter we wrote above.
+
+R packages require a little bit more work. For example, you need to provide all that helpful documentation you have been referring to when using others' functions. You will also need to run a series of robustness checks to make sure users' code doesn't break if they add something unusual to your functions.
+
+However, packages can be very rewarding to produce. For example, I hope you have found [`polisciols`](https://github.com/hgoers/polisciols) very helpful! I also had the opportunity to work with the UN and some amazing R coders to write [`comtradr`](https://github.com/ropensci/comtradr/tree/main), an R package that allows users to access the UN Comtrade API from R. There are many opportunities to work with organizations and others when coding in R.
+
+To get started building your own R packages, you should check out the helpfully titled [*R Packages* by Hadley Wickham (of R4DS fame) and Jennifer Bryan](https://r-pkgs.org/).

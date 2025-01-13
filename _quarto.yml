@@ -38,7 +38,19 @@ website:
           contents: 
             - content/03-01-wrangling.qmd
             - content/03-02-bivariate.qmd
-        
+        - section: "Session 4"
+          contents: 
+            - content/04-01-merging.qmd
+            - content/04-02-linear_regression.qmd
+        - section: "Session 5"
+          contents: 
+            - content/05-01-programming.qmd
+            - content/05-02-probability.qmd
+        - section: "Session 6"
+          contents: 
+            - content/06-01-communicating.qmd
+            - content/06-02-uncertainty.qmd
+            
   page-footer:
     left: |
       Content {{< fa brands creative-commons >}} {{< var course.copyright_year >}} by [{{< var instructor.name_no_title >}}]({{< var instructor.url >}}) <br>

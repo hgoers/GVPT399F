@@ -247,7 +247,7 @@ gdp_175_df
 
 The average GDP among this small pure random sample is `r dollar(mean(gdp_175_df$value))`, a mere `r dollar(abs(mean(gdp_df$value) - mean(gdp_175_df$value)))` dollar difference from the population average.
 
-The larger your sample size, the closer you will get to the population average. You increase the likelihood you capture the diversity of the population as your sample size increases.
+The larger your sample size, the closer you will get to the population average. You increase the likelihood you capture the diversity of the population as your sample size increases. This is referred to as **sampling variability**.
 
 ## US Presidential Elections
 
